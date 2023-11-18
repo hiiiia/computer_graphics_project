@@ -15,7 +15,9 @@ void MyDisplay() {
 }
 
 int main(int argc, char** argv) {
-//용한빛 석박사 통합기원 2일차
+//용한빛
+//구하영
+// 정희중
 	glutInit(&argc, argv);
 	glutCreateWindow("Example");
 	glutDisplayFunc(MyDisplay);
