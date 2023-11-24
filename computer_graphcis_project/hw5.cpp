@@ -212,18 +212,17 @@
 //    glRotatef((GLfloat)Day, 0.0, 1.0, 0.0);
 //    glTranslatef(0.7, 0.0, 0.0);
 //    // Get the current modelview matrix
-//    GLfloat modelviewMatrix[16];
-//    glGetFloatv(GL_MODELVIEW_MATRIX, modelviewMatrix);
+//    //GLfloat modelviewMatrix[16];
+//    //glGetFloatv(GL_MODELVIEW_MATRIX, modelviewMatrix);
 //
-//    // Extract the translation part
-//    moonPosition[0] = modelviewMatrix[12];
-//    moonPosition[1] = modelviewMatrix[13];
-//    moonPosition[2] = modelviewMatrix[14];
-//    moonPosition[3] = modelviewMatrix[15];
+//    //// Extract the translation part
+//    //moonPosition[0] = modelviewMatrix[12];
+//    //moonPosition[1] = modelviewMatrix[13];
+//    //moonPosition[2] = modelviewMatrix[14];
+//    //moonPosition[3] = modelviewMatrix[15];
 //
 //    // Restore the previous modelview matrix
-//    glLightfv(GL_LIGHT1, GL_POSITION, moonPosition);
-//    glDisable(GL_LIGHT1);
+//
 //
 // 
 //    printf_s("%f / %f / %f /%f \n", moonPosition[0], moonPosition[1], moonPosition[2], moonPosition[3]);
@@ -251,7 +250,6 @@
 //    glMaterialfv(GL_FRONT, GL_SHININESS, earth_shininess);
 //    //glMaterialfv(GL_FRONT, GL_EMISSION, sun_mat_emission);
 //    glutSolidSphere(0.1, 100, 100);
-//    glEnable(GL_LIGHT1);
 //    glPushMatrix();
 //
 //    //glDisable(GL_BLEND);
@@ -275,8 +273,12 @@
 //    glMaterialfv(GL_FRONT, GL_SHININESS, moon_shininess);
 //    glMaterialfv(GL_FRONT, GL_EMISSION, moon_mat_emission);
 //
+//    glLightfv(GL_LIGHT1, GL_POSITION, moonPosition);
+//    glDisable(GL_LIGHT1);
+//
 //    glutSolidSphere(0.04, 100, 100);
 //
+//    glEnable(GL_LIGHT1);
 //
 //
 //    //glDisable(GL_LIGHTING);
@@ -309,6 +311,7 @@
 //    gluPerspective(20, (float)windowWidth / (float)windowHeight, 0, 10);
 //
 //    //Draw Scene
+//
 //    DrawSolarSystem();
 //
 //    //Send it to buffer
@@ -435,6 +438,7 @@
 //    up = normalize(up);
 //    cout << "After normal up vector : " << "(" << up.x << ", " << up.y << ", " << up.z << ")";
 //    myCamera.InitCamera(eye, at, up);
+//
 //
 //    //set callback functions
 //    glutDisplayFunc(MyDisplay);
