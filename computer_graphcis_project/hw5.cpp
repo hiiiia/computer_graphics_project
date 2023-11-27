@@ -133,7 +133,7 @@
 //    GLfloat earth_shininess[] = { 80.0 };
 //
 //
-//    //glEnable(GL_DEPTH_TEST);
+//    glEnable(GL_DEPTH_TEST);
 //    glShadeModel(GL_SMOOTH);
 //
 //    glEnable(GL_LIGHTING);
@@ -308,7 +308,7 @@
 //    //Set projection;
 //    glMatrixMode(GL_PROJECTION);
 //    glLoadIdentity();
-//    gluPerspective(20, (float)windowWidth / (float)windowHeight, 0, 10);
+//    gluPerspective(20, (float)windowWidth / (float)windowHeight, 1, 10);
 //
 //    //Draw Scene
 //
