@@ -151,10 +151,12 @@
     <ClCompile Include="android.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="hw5.cpp" />
+    <ClCompile Include="hw6.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="skybox_test.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="hw6.h" />
     <ClInclude Include="stb_image.h" />
   </ItemGroup>
   <ItemGroup>
