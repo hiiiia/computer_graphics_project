@@ -166,13 +166,14 @@ public:
 		float ctime = sin( time * PI / 180.0f); 
 		
 		// 1. 3D Array Init
-		float*** vertices = new float** [SeaSize];
+		float vertices[100][100][100];
+		/*float*** vertices = new float** [SeaSize];
 		for (int i = 0; i < SeaSize; i++) {
 			vertices[i] = new float* [SeaSize];
 			for (int j = 0; j < SeaSize; j++) {
 				vertices[i][j] = new float[3];
 			}
-		}
+		}*/
 
 		// 2. move vertexPos
 
