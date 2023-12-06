@@ -17,7 +17,7 @@
 #include <time.h>
 
 #include "skybox.h"
-
+#include "night_sphere.h"
 camera myCamera;
 
 vec2 preMouse, currentMouse;
@@ -27,6 +27,7 @@ static int SpinAngle = 0;
 
 Sea sea;
 Skybox skybox;
+Night_sphere night_sphere;
 
 void InitLight() {
     GLfloat light0_ambient[] = { 0.5, 0.5, 0.5, 1.0 };     //조명 특성
@@ -77,7 +78,7 @@ void MyDisplay() {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0, 20.0);
+    gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0, 41.0);
 
     //set modelview matrix
     glMatrixMode(GL_MODELVIEW);
@@ -90,11 +91,13 @@ void MyDisplay() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ///
     //put your code here
+    glDisable(GL_LIGHTING);
 
-    glDisable(GL_LIGHTING); //조명 활성화
+
     skybox.MakeSky(10);
-
-    glEnable(GL_LIGHTING); //조명 활성화
+    //night_sphere.Draw_night_sphere(1);
+    /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
+    glEnable(GL_LIGHTING); 
     sea.DrawSea(100, SpinAngle);
 
     glutSwapBuffers();
@@ -164,15 +167,16 @@ int main(int argc, char** argv) {
     glutCreateWindow("openGL Sample Drawing");
 
     //Init camera
-    vec3 eye(0, 0, 3);
-    vec3 at(0, 0, 0);
-    vec3 up(0, 1, 0);
+    vec3 eye(0, 1, 0);
+    vec3 at(0, 3, 0);
+    vec3 up(0, 0, 1);
     up = normalize(up);
     myCamera.InitCamera(eye, at, up);
 
     
     sea.init();
     skybox.init();
+    night_sphere.init();
 
     InitLight();
     glutDisplayFunc(MyDisplay);

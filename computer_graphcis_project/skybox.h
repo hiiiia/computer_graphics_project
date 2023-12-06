@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #define STB_IMAGE_IMPLEMENTATION
 
 #pragma once
@@ -33,12 +33,12 @@ public:
 		//File = fopen(Filename, "r");
 		if (fopen_s(&File, Filename, "r") == 0) {
 			fclose(File);
-			return auxDIBImageLoad(Filename);	     // ÆÄÀÏ·ÎºÎÅÍ ¸Þ¸ð¸®·Î
+			return auxDIBImageLoad(Filename);	     // ï¿½ï¿½ï¿½Ï·Îºï¿½ï¿½ï¿½ ï¿½Þ¸ð¸®·ï¿½
 		}
 		return NULL;
 	}
 
-	int LoadGLTextures(const char* szFilePath,int number) {       //ÆÄÀÏÀ» ·ÎµåÇÏ°í ÅØ½ºÃÄ·Î º¯È¯
+	int LoadGLTextures(const char* szFilePath, int number) {       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½Ï°ï¿½ ï¿½Ø½ï¿½ï¿½Ä·ï¿½ ï¿½ï¿½È¯
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load(szFilePath, &width, &height, &nrChannels, 0);
 		if (data) {
@@ -47,7 +47,7 @@ public:
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			printf_s("\n%s %d %d %d\n", szFilePath, width, height, nrChannels );
+			printf_s("\n%s %d %d %d\n", szFilePath, width, height, nrChannels);
 			stbi_image_free(data);
 			return true;
 		}
@@ -86,6 +86,9 @@ public:
 
 		glDisable(GL_DEPTH_TEST);
 
+		glPushMatrix();
+
+		glRotated(90, 1, 0, 0);
 
 		//printf_s("%d %d", MyTextureObject[0], MyTextureObject[1]);
 		// Front face
@@ -145,7 +148,9 @@ public:
 		glEnd();
 
 		glEnable(GL_DEPTH_TEST);
+
+		glPopMatrix();
+
 	}
 
 };
-

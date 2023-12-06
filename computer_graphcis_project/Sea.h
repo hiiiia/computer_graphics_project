@@ -1,4 +1,4 @@
-#define _CRT_SECURE_NO_WARNINGS
+ï»¿#define _CRT_SECURE_NO_WARNINGS
 #pragma once
 
 #include <GL/glut.h>
@@ -36,7 +36,7 @@ public:
 };
 
 class OakCask : public MovingObj {
-	
+
 public:
 	OakCask() {
 
@@ -67,27 +67,27 @@ public:
 		pos_z = z;
 
 		glPushMatrix();
-			glTranslatef(0.0, 0.0, 5);
-			glLightfv(GL_LIGHT0, GL_POSITION,
-				LightPosition);
+		glTranslatef(0.0, 0.0, 5);
+		glLightfv(GL_LIGHT0, GL_POSITION,
+			LightPosition);
 		glPopMatrix();
 
 		glPushMatrix();
-			glTranslatef(x, y, z);
-			glMaterialfv(GL_FRONT, GL_AMBIENT,
-				mat_ambient);
-			glMaterialfv(GL_FRONT, GL_DIFFUSE,
-				mat_diffuse);
-			glMaterialfv(GL_FRONT, GL_SPECULAR,
-				mat_specular);
-			glMaterialfv(GL_FRONT, GL_SHININESS,
-				high_shininess);
-			glMaterialfv(GL_FRONT, GL_EMISSION,
-				no_mat);
+		glTranslatef(x, y, z);
+		glMaterialfv(GL_FRONT, GL_AMBIENT,
+			mat_ambient);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE,
+			mat_diffuse);
+		glMaterialfv(GL_FRONT, GL_SPECULAR,
+			mat_specular);
+		glMaterialfv(GL_FRONT, GL_SHININESS,
+			high_shininess);
+		glMaterialfv(GL_FRONT, GL_EMISSION,
+			no_mat);
 
-			glutSolidSphere(1.0, 100, 100);
+		glutSolidSphere(1.0, 100, 100);
 		glPopMatrix();
-		cout << "¿ÀÅ©Åë »ý¼ºµÊ";
+		cout << "ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½";
 	}
 
 };
@@ -101,21 +101,21 @@ public:
 		FILE* File = NULL;
 		if (!Filename) return NULL;
 		//File = fopen(Filename, "r");
-		if (fopen_s(&File,Filename, "r") == 0) {
+		if (fopen_s(&File, Filename, "r") == 0) {
 			fclose(File);
-			return auxDIBImageLoad(Filename);	     // ÆÄÀÏ·ÎºÎÅÍ ¸Þ¸ð¸®·Î
+			return auxDIBImageLoad(Filename);	     // ï¿½ï¿½ï¿½Ï·Îºï¿½ï¿½ï¿½ ï¿½Þ¸ð¸®·ï¿½
 		}
 		return NULL;
 	}
 
-	int LoadGLTextures(const char* szFilePath) {       //ÆÄÀÏÀ» ·ÎµåÇÏ°í ÅØ½ºÃÄ·Î º¯È¯
+	int LoadGLTextures(const char* szFilePath) {       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½Ï°ï¿½ ï¿½Ø½ï¿½ï¿½Ä·ï¿½ ï¿½ï¿½È¯
 		int Status = FALSE;
 		glClearColor(0.0, 0.0, 0.0, 0.5);
-		memset(pTextureImage, 0, sizeof(void*) * 1);    //Æ÷ÀÎÅÍ¸¦ ³Î·Î
+		memset(pTextureImage, 0, sizeof(void*) * 1);    //ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½Î·ï¿½
 
-		if (pTextureImage[0] = LoadBMP(szFilePath)) {   //ºñÆ®¸ÊÀ» ·ÎµåÇÏ°í ¿À·ùÈ®ÀÎ
-			Status = TRUE;                              //»óÅÂ ÇÃ·¢À» True·Î
-			glGenTextures(1, &MyTextureObject[0]);      //ÅØ½ºÃÄ »ý¼º
+		if (pTextureImage[0] = LoadBMP(szFilePath)) {   //ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½È®ï¿½ï¿½
+			Status = TRUE;                              //ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ Trueï¿½ï¿½
+			glGenTextures(1, &MyTextureObject[0]);      //ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
 			glTexImage2D(GL_TEXTURE_2D, 0, 3,
 				pTextureImage[0]->sizeX, pTextureImage[0]->sizeY,
@@ -125,11 +125,11 @@ public:
 			glEnable(GL_TEXTURE_2D);
 		}
 
-		if (pTextureImage[0]) {                 //ÅØ½ºÃÄ°¡ Á¸ÀçÇÏ¸é
-			if (pTextureImage[0]->data) {       //ÅØ½ºÃÄ ¿µ»óÀÌ Á¸ÀçÇÏ¸é
-				free(pTextureImage[0]->data);   //ÅØ½ºÃÄ ¿µ»ó°ø°£ ¹Ý³³
+		if (pTextureImage[0]) {                 //ï¿½Ø½ï¿½ï¿½Ä°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½
+			if (pTextureImage[0]->data) {       //ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½
+				free(pTextureImage[0]->data);   //ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ý³ï¿½
 			}
-			free(pTextureImage[0]);             //ÅØ½ºÃÄ ¹Ý³³
+			free(pTextureImage[0]);             //ï¿½Ø½ï¿½ï¿½ï¿½ ï¿½Ý³ï¿½
 		}
 		return Status;
 	}
@@ -148,11 +148,11 @@ public:
 	}
 
 	void DrawSea(int seaSize, float time) {
-		// 1. Á¡ »ý¼º
-		// 2. Á¡ À§Ä¡ ÀÌµ¿
-		// 3. Á¡ ±×¸®±â
+		// 1. ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		// 2. ï¿½ï¿½ ï¿½ï¿½Ä¡ ï¿½Ìµï¿½
+		// 3. ï¿½ï¿½ ï¿½×¸ï¿½ï¿½ï¿½
 
-		//¸ÅÁú
+		//ï¿½ï¿½ï¿½ï¿½
 		GLfloat sea_mat_amb[] = { 0.1, 0.1, 0.1, 1.0 };
 		GLfloat sea_mat_diff[] = { 0.1, 0.1, 0.1, 1.0 };
 		GLfloat sea_mat_specular[] = { 0.5, 0.5, 1.0, 1.0 };
@@ -162,9 +162,9 @@ public:
 
 
 
-		float stime = 0.5f*sin( time * PI / 180.0f); 
-		float ctime = sin( time * PI / 180.0f); 
-		
+		float stime = 0.5f * sin(time * PI / 180.0f);
+		float ctime = sin(time * PI / 180.0f);
+
 		// 1. 3D Array Init
 		float vertices[100][100][100];
 		/*float*** vertices = new float** [SeaSize];
@@ -183,12 +183,12 @@ public:
 			for (int j = 0; j < SeaSize; j++) {
 				vertices[i][j][0] = i;
 				vertices[i][j][1] = j;
-				vertices[i][j][2] = 0.25f * sin(2.0f*(time + timeTmp) * PI / 180.0f)  ;
+				vertices[i][j][2] = 0.25f * sin(2.0f * (time + timeTmp) * PI / 180.0f);
 			}
 			timeTmp += 30;
 
-			
-			
+
+
 		}
 		for (int i = 0; i < SeaSize; i++) {
 
@@ -203,10 +203,10 @@ public:
 
 		// 3. draw Sea
 		glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
-		for (int i = 0; i < SeaSize-1; i++) {
-			
-			
-			for (int j = 0; j < SeaSize-1; j++) {
+		for (int i = 0; i < SeaSize - 1; i++) {
+
+
+			for (int j = 0; j < SeaSize - 1; j++) {
 				/*glBegin(GL_LINES);
 				glVertex3f(vertices[i][j][0], vertices[i][j][1], vertices[i][j][2]);
 				glVertex3f(vertices[i][j + 1][0], vertices[i][j + 1][1], vertices[i][j + 1][2]);
@@ -228,35 +228,35 @@ public:
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, sea_mat_diff);
 				glMaterialfv(GL_FRONT, GL_SPECULAR, sea_mat_specular);
 
-				
+
 				glBegin(GL_TRIANGLES);
 				vec3 p1(vertices[i][j][0], vertices[i][j][1], vertices[i][j][2]);
 				vec3 p2(vertices[i][j + 1][0], vertices[i][j + 1][1], vertices[i][j + 1][2]);
 				vec3 p3(vertices[i + 1][j][0], vertices[i + 1][j][1], vertices[i + 1][j][2]);
 				vec3 p4(vertices[i + 1][j + 1][0], vertices[i + 1][j + 1][1], vertices[i + 1][j + 1][2]);
 
-				
+
 				glTexCoord2f(0.0f, 0.0f);
 				glVertex3f(p1.x, p1.y, p1.z);
 				glTexCoord2f(0.0f, 1.0f);
 				glVertex3f(p2.x, p2.y, p2.z);
-				glTexCoord2f(1.0f, 0.0f); 
+				glTexCoord2f(1.0f, 0.0f);
 				glVertex3f(p3.x, p3.y, p3.z);
 
-				glTexCoord2f(0.0f, 1.0f); 
-				glVertex3f(p2.x, p2.y, p2.z); 
+				glTexCoord2f(0.0f, 1.0f);
+				glVertex3f(p2.x, p2.y, p2.z);
 				glTexCoord2f(1.0f, 0.0f);
-				glVertex3f(p3.x, p3.y, p3.z); 
+				glVertex3f(p3.x, p3.y, p3.z);
 				glTexCoord2f(1.0f, 1.0f);
-				glVertex3f(p4.x, p4.y, p4.z); 
+				glVertex3f(p4.x, p4.y, p4.z);
 				glEnd();
-				
-				
+
+
 			}
-			
+
 		}
 	}
-	
+
 };
 
 class Test_SeaLight {
@@ -266,13 +266,13 @@ public:
 		GLfloat sun_light_diffuse[] = { 1, 0.5, 0.5, 1.0 };
 		GLfloat sun_light_specular[] = { 1, 1, 1, 1.0 };
 
-		glShadeModel(GL_SMOOTH); //±¸·Î ¼ÎÀÌµù
-		glEnable(GL_DEPTH_TEST);//±íÀÌ ¹öÆÛ È°¼ºÈ­
-		glEnable(GL_LIGHTING); //Á¶¸í È°¼ºÈ­
-	
+		glShadeModel(GL_SMOOTH); //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½
+		glEnable(GL_DEPTH_TEST);//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
+		glEnable(GL_LIGHTING); //ï¿½ï¿½ï¿½ï¿½ È°ï¿½ï¿½È­
+
 		glEnable(GL_LIGHT0);
-		glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_amb); //ÁÖº¯±¤ ¼³Á¤
-		glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse); //È®»ê±¤ ¼³Á¤
-		glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular); //Á¤¹Ý»ç±¤ ¼³Á¤
+		glLightfv(GL_LIGHT0, GL_AMBIENT, sun_light_amb); //ï¿½Öºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		glLightfv(GL_LIGHT0, GL_DIFFUSE, sun_light_diffuse); //È®ï¿½ê±¤ ï¿½ï¿½ï¿½ï¿½
+		glLightfv(GL_LIGHT0, GL_SPECULAR, sun_light_specular); //ï¿½ï¿½ï¿½Ý»ç±¤ ï¿½ï¿½ï¿½ï¿½
 	}
 };

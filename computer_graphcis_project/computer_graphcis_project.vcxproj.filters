@@ -15,6 +15,7 @@
     <ClInclude Include="Camera2.h" />
     <ClInclude Include="Sea.h" />
     <ClInclude Include="skybox.h" />
+    <ClInclude Include="night_sphere.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
