@@ -1,10 +1,23 @@
+
+
+#include <GL/glew.h>
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+
+#include <vector>
+#include <GLAUX/glaux.h>
+
+#include <glm/glm.hpp> 
+#include <glm/gtc/matrix_transform.hpp> 
+#include <glm/gtc/type_ptr.hpp>
+
 #include "Camera2.h"
 #include "Sea.h"
 #include <time.h>
-#define _CRT_SECURE_NO_WARNINGS
+
+#include "skybox.h"
+
 camera myCamera;
 
 vec2 preMouse, currentMouse;
@@ -13,6 +26,7 @@ int windowHeight, windowWidth;
 static int SpinAngle = 0;
 
 Sea sea;
+Skybox skybox;
 
 void InitLight() {
     GLfloat light0_ambient[] = { 0.5, 0.5, 0.5, 1.0 };     //조명 특성
@@ -32,6 +46,8 @@ void InitLight() {
 }
 
 void MyDisplay() {
+
+    
 
     //재질 설정
     GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -60,11 +76,13 @@ void MyDisplay() {
     //set projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
     gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0, 20.0);
 
     //set modelview matrix
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
 
@@ -72,11 +90,15 @@ void MyDisplay() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ///
     //put your code here
-    
+
+    glDisable(GL_LIGHTING); //조명 활성화
+    skybox.MakeSky(10);
+
+    glEnable(GL_LIGHTING); //조명 활성화
     sea.DrawSea(100, SpinAngle);
-    glutSolidSphere(0.4, 100, 100);
-    /// 
-    glFlush();
+
+    glutSwapBuffers();
+
 }
 
 void MyReshape(int w, int h) {
@@ -137,19 +159,20 @@ void MyKeyboard(unsigned char key, int x, int y) {
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(500, 500);
-    glutInitWindowPosition(100, 100);
+    glutInitWindowSize(800, 800);
+    glutInitWindowPosition(200, 200);
     glutCreateWindow("openGL Sample Drawing");
 
     //Init camera
-    vec3 eye(0, 1, 3);
+    vec3 eye(0, 0, 3);
     vec3 at(0, 0, 0);
-    vec3 up(1, 0, 0);
+    vec3 up(0, 1, 0);
     up = normalize(up);
     myCamera.InitCamera(eye, at, up);
 
     
     sea.init();
+    skybox.init();
 
     InitLight();
     glutDisplayFunc(MyDisplay);
