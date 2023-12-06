@@ -34,6 +34,7 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="hw7.cpp">
+    <ClCompile Include="obj.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -42,6 +43,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stb_image.h">
+    <ClInclude Include="Camera2.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Sea.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
