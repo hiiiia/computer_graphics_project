@@ -95,7 +95,7 @@ void MyDisplay() {
 
 
     skybox.MakeSky(10);
-    //night_sphere.Draw_night_sphere(1);
+    //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
     glEnable(GL_LIGHTING); 
     sea.DrawSea(100, SpinAngle);

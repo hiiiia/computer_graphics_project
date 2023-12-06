@@ -1,8 +1,13 @@
-﻿#define _CRT_SECURE_NO_WARNINGS
+﻿#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+#endif
 
 #pragma once
-#include "stb_image.h"
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

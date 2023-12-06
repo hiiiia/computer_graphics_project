@@ -1,4 +1,4 @@
-#ifndef _CRT_SECURE_NO_WARNINGS
+ï»¿#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
@@ -30,7 +30,7 @@ public:
 	unsigned int MyTextureObject[TEXTURE_NUM];
 	GLint g_textureID[1];
 
-	AUX_RGBImageRec* pTextureImage[1];
+	AUX_RGBImageRec* pTextureImage = NULL;
 
 	AUX_RGBImageRec* LoadBMP(const char* Filename) {
 		FILE* File = NULL;
@@ -38,14 +38,13 @@ public:
 		//File = fopen(Filename, "r");
 		if (fopen_s(&File, Filename, "r") == 0) {
 			fclose(File);
-			return auxDIBImageLoad(Filename);	     // ÆÄÀÏ·ÎºÎÅÍ ¸Þ¸ð¸®·Î
+			return auxDIBImageLoad(Filename);	     // ï¿½ï¿½ï¿½Ï·Îºï¿½ï¿½ï¿½ ï¿½Þ¸ð¸®·ï¿½
 		}
 		return NULL;
 	}
 
-	int LoadGLTextures(const char* szFilePath, int number) {       //ÆÄÀÏÀ» ·ÎµåÇÏ°í ÅØ½ºÃÄ·Î º¯È¯
+	int LoadGLTextures(const char* szFilePath, int number) {       //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½Ï°ï¿½ ï¿½Ø½ï¿½ï¿½Ä·ï¿½ ï¿½ï¿½È¯
 		int width, height, nrChannels;
-		memset(pTextureImage, 0, sizeof(void*) * 1);
 		unsigned char* data = stbi_load(szFilePath, &width, &height, &nrChannels, 0);
 		if (data) {
 			glGenTextures(1, MyTextureObject + number);
@@ -68,15 +67,7 @@ public:
 		int Status = FALSE;
 
 		if (
-			//LoadGLTextures("snow_terrian/front.bmp", 0) &&
-			//LoadGLTextures("snow_terrian/back.bmp", 1) &&
-			//LoadGLTextures("snow_terrian/top.bmp", 2) &&
-			////LoadGLTextures("./Data/top.bmp", 2) &&
-			//LoadGLTextures("snow_terrian/bottom.bmp", 3) &&
-			//LoadGLTextures("snow_terrian/right.bmp", 4) &&
-			//LoadGLTextures("snow_terrian/left.bmp", 5)&&
 			LoadGLTextures("./Data/Earth.bmp", 0)
-
 			) {
 			printf_s("\nsky Image Load success\n");
 		}
@@ -87,15 +78,17 @@ public:
 		glEnable(GL_TEXTURE_2D);
 	}
 
-	void Draw_night_sphere(int skybox_size) {
+	void Make_night_sky(int skybox_size) {
 
-		glDisable(GL_TEXTURE_2D);
+		glEnable(GL_TEXTURE_2D);
 
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		glBindTexture(GL_TEXTURE_2D, *(MyTextureObject + 0));
+		glDisable(GL_DEPTH_TEST);
 
-		glEnable(GL_TEXTURE_2D);
+
+
+		glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
 
 		GLUquadric* obj = gluNewQuadric();
 		gluQuadricTexture(obj, GL_TRUE);
@@ -104,7 +97,14 @@ public:
 		gluDeleteQuadric(obj);
 
 
+
+
+
+
+		glEnable(GL_DEPTH_TEST);
+
+		glPopMatrix();
+
 	}
 
 };
-
