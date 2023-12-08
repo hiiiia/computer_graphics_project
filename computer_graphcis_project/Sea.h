@@ -181,8 +181,8 @@ public:
 
 		for (int i = 0; i < SeaSize; i++) {
 			for (int j = 0; j < SeaSize; j++) {
-				vertices[i][j][0] = i;
-				vertices[i][j][1] = j;
+				vertices[i][j][0] = i - (int)( SeaSize / 2 );
+				vertices[i][j][1] = j - (int)( SeaSize / 2 );
 				vertices[i][j][2] = 0.25f * sin(2.0f * (time + timeTmp) * PI / 180.0f);
 			}
 			timeTmp += 30;
