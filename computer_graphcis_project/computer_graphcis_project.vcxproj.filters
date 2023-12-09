@@ -16,6 +16,7 @@
     <ClInclude Include="Sea.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="night_sphere.h" />
+    <ClInclude Include="LoadObj.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

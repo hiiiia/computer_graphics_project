@@ -11,9 +11,12 @@
 #include <math.h>
 #include "glaux.h"
 #include <gl/glut.h>
+#include "LoadObj.h"
+
 
 #define PI 3.1415926
 #define TEXTURE_NUM 1
+#define SeaSize 100
 
 using namespace glm;
 using namespace std;
@@ -36,10 +39,17 @@ public:
 };
 
 class OakCask : public MovingObj {
-
+	static int Total_OakCask_Count;
 public:
-	OakCask() {
+	
+	LoadObj4 obj;
 
+	OakCask() {
+		Total_OakCask_Count += 1;
+		obj.Load("Images/objs/Wooden_Barrel/Wooden Barrel.obj");
+		obj.printInfo();
+		cout << "\n\n오크통 객체 생성 완료 :: 총 개수 - " << Total_OakCask_Count << endl;
+		
 	}
 
 	void Move() override {
@@ -50,7 +60,23 @@ public:
 
 	}
 
-	inline void DrawObj(float x, float y, float z) override {
+	void DrawObj(float x, float y, float z) override {
+
+		vector < vec3 > vertices;
+		vector < ivec3 > faces_vertices;
+		vector < ivec3 > faces_uvs;
+		vector < ivec3 > faces_normals;
+		vector < vec2 > uvs;
+		vector < vec3 > normals;
+
+		glPushMatrix();
+			glPushMatrix();
+			// 
+			
+			glPopMatrix();
+		glPopMatrix();
+
+		/*
 		GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
 		GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
 		GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
@@ -61,10 +87,6 @@ public:
 		GLfloat high_shininess[] = { 100.0 };
 		GLfloat mat_emission[] = { 0.3, 0.2, 0.2, 0.0 };
 		GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
-
-		pos_x = x;
-		pos_y = y;
-		pos_z = z;
 
 		glPushMatrix();
 		glTranslatef(0.0, 0.0, 5);
@@ -86,11 +108,12 @@ public:
 			no_mat);
 
 		glutSolidSphere(1.0, 100, 100);
-		glPopMatrix();
-		cout << "��ũ�� ������";
+		glPopMatrix();*/
+
 	}
 
 };
+int OakCask::Total_OakCask_Count = 0;
 
 class Sea {
 public:
@@ -158,7 +181,6 @@ public:
 		GLfloat sea_mat_specular[] = { 0.5, 0.5, 1.0, 1.0 };
 
 		GLfloat seaLightpos[] = { 1,1,1,1 };
-		const int SeaSize = seaSize;
 
 
 
@@ -166,9 +188,9 @@ public:
 		float ctime = sin(time * PI / 180.0f);
 
 		// 1. 3D Array Init
-		float vertices[100][100][100];
+		float vertices[SeaSize][SeaSize][SeaSize];
 		/*float*** vertices = new float** [SeaSize];
-		for (int i = 0; i < SeaSize; i++) {
+		for (int i = 0; i < SeaSize; i++) { 
 			vertices[i] = new float* [SeaSize];
 			for (int j = 0; j < SeaSize; j++) {
 				vertices[i][j] = new float[3];

@@ -14,6 +14,7 @@
 
 #include "Camera2.h"
 #include "Sea.h"
+#include "LoadObj.h"
 #include <time.h>
 
 #include "skybox.h"
@@ -26,6 +27,9 @@ int windowHeight, windowWidth;
 static int SpinAngle = 0;
 
 Sea sea;
+OakCask oak1;
+//OakCask oak2;
+//OakCask oak3;
 Skybox skybox;
 Night_sphere night_sphere;
 
@@ -99,6 +103,9 @@ void MyDisplay() {
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
     glEnable(GL_LIGHTING); 
     sea.DrawSea(100, SpinAngle);
+    //oak1.DrawObj(1.f, 1.f, 0.f);
+    //oak2.DrawObj(1.f, -1.f, 0.f);
+    //oak3.DrawObj(-1.f, -1.f, 0.f);
 
     glutSwapBuffers();
 
@@ -174,9 +181,13 @@ int main(int argc, char** argv) {
     myCamera.InitCamera(eye, at, up);
 
     
+    
     sea.init();
     skybox.init();
     night_sphere.init();
+
+    //oak1.DrawObj(1.f, 1.f, 0.f);
+
 
     InitLight();
     glutDisplayFunc(MyDisplay);
