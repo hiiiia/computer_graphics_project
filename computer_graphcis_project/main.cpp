@@ -102,11 +102,24 @@ void MyDisplay() {
     //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
     glEnable(GL_LIGHTING); 
-    sea.DrawSea(100, SpinAngle);
-    //oak1.DrawObj(1.f, 1.f, 0.f);
+
+    GLfloat testlightPosition[] = { 0.f, 0.f, 5.f, 1.f};
+    //glLightfv(GL_LIGHT0, GL_POSITION , testlightPosition);
+
+    
+    sea.DrawSea(SpinAngle, 1, 20, 25);
+    oak1.DrawObj(1.f, 1.f, 0.f);
     //oak2.DrawObj(1.f, -1.f, 0.f);
     //oak3.DrawObj(-1.f, -1.f, 0.f);
 
+
+    glutSolidSphere(0.5,100,100);
+    glTranslatef(0, 0, 2.f);
+    glutSolidSphere(0.5, 100, 100);
+    glTranslatef(2.f, 0, 0);
+    glutSolidSphere(0.5, 100, 100);
+    glTranslatef(0, 2.f, 0);
+    glutSolidSphere(0.5, 100, 100);
     glutSwapBuffers();
 
 }
@@ -180,14 +193,14 @@ int main(int argc, char** argv) {
     up = normalize(up);
     myCamera.InitCamera(eye, at, up);
 
-    
+    srand((unsigned int)time(NULL));
     
     sea.init();
     skybox.init();
     night_sphere.init();
-
+    
     //oak1.DrawObj(1.f, 1.f, 0.f);
-
+    
 
     InitLight();
     glutDisplayFunc(MyDisplay);
