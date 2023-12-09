@@ -30,7 +30,7 @@ public:
 
 class LoadObj4 {
 public:
-    vector < ObjInfo_f4 > objInfo;
+    ObjInfo_f4 objInfo;
 
     int objCount = -1;
 
@@ -58,11 +58,11 @@ public:
 
             if (tokens[0] == "o") {
 
-                ObjInfo_f4 newObjInfo;
+                /*ObjInfo_f4 newObjInfo;
 
                 newObjInfo.name = tokens[1];
 
-                objInfo.push_back(newObjInfo);
+                objInfo.push_back(newObjInfo);*/
                 objCount++;
             }
             else if (tokens[0] == "v") {
@@ -72,7 +72,7 @@ public:
                 vertex.y = stof(tokens[2]);
                 vertex.z = stof(tokens[3]);
 
-                objInfo[objCount].vertices.push_back(vertex);
+                objInfo.vertices.push_back(vertex);
                 
             }
             else if (tokens[0] == "vn") {
@@ -82,7 +82,7 @@ public:
                 normal.y = stof(tokens[2]);
                 normal.z = stof(tokens[3]);
 
-                objInfo[objCount].normals.push_back(normal);
+                objInfo.normals.push_back(normal);
             }
             else if (tokens[0] == "vt") {
                 vec2 uv;
@@ -90,7 +90,7 @@ public:
                 uv.x = stof(tokens[1]);
                 uv.y = stof(tokens[2]);
 
-                objInfo[objCount].uvs.push_back(uv);
+                objInfo.uvs.push_back(uv);
             }
             else if (tokens[0] == "f") {
 
@@ -140,14 +140,16 @@ public:
                 }
 
                 if (values1.size() == 2) {
-                    objInfo[objCount].faces_vertices.push_back(ivec4( values1[0]-1, values2[0]-1, values3[0]-1, values4[0]-1));
-                    objInfo[objCount].faces_normals.push_back(ivec4( values1[1]-1, values2[1]-1, values3[1]-1, values4[1])-1);
+                    objInfo.faces_vertices.push_back(ivec4( values1[0]-1, values2[0]-1, values3[0]-1, values4[0]-1));
+                    objInfo.faces_normals.push_back(ivec4( values1[1]-1, values2[1]-1, values3[1]-1, values4[1]-1));
                 }
 
                 if (values1.size() == 3) {
-                    objInfo[objCount].faces_vertices.push_back(ivec4(values1[0]-1, values2[0]-1, values3[0]-1, values4[0]-1));
-                    objInfo[objCount].faces_uvs.push_back(ivec4(values1[1]-1, values2[1]-1, values3[1]-1, values4[1]-1));
-                    objInfo[objCount].faces_normals.push_back(ivec4(values1[2]-1, values2[2]-1, values3[2]-1, values4[2]-1));
+                    objInfo.faces_vertices.push_back(ivec4(values1[0]-1, values2[0]-1, values3[0]-1, values4[0]-1));
+                    objInfo.faces_uvs.push_back(ivec4(values1[1]-1, values2[1]-1, values3[1]-1, values4[1]-1));
+                    objInfo.faces_normals.push_back(ivec4(values1[2]-1, values2[2]-1, values3[2]-1, values4[2]-1));
+                    
+                    //cout << " 노말 벡터 번호 : " << values1[2] - 1 << " " << values2[2] - 1 << " " << values3[2] - 1 << " " << values4[2] - 1 << " " << endl;
                 }
 
             }
@@ -156,6 +158,13 @@ public:
 
         }
 
+        /*for (int i = 0; i < objInfo.faces_normals.size(); i++) {
+            cout << " 노말 번호 : ";
+            for (int j = 0; j < 4; j++) {
+                cout << objInfo.faces_normals[i][j] << " ";
+            }
+            cout << endl;
+        }*/
 
         file.close();
         return true;
@@ -163,24 +172,21 @@ public:
 
     void printInfo() {
 
-        if (objInfo.size() == 0) {
-            cout << " 저장된 객체 정보 없음 " << endl;
-            return;
-        }
-
+        
+            
         cout << "----- 객체 정보 ------\n" << endl;
+        cout << " 이름 : " << objInfo.name << endl;
+        cout << " 정점 개수 : " << objInfo.vertices.size() << endl;
+        cout << " 노말 벡터 개수 : " << objInfo.normals.size() << endl;
+        cout << " uv 개수 : " << objInfo.uvs.size() << endl;
+        cout << " 면 정점 개수 : " << objInfo.faces_vertices.size() << endl;
+        cout << " 면 uv 개수 : " << objInfo.faces_uvs.size() << endl;
+        cout << " 면 노말 벡터 개수 : " << objInfo.faces_normals.size() << endl;
+        cout << "\n----------------------" << endl;
 
-        for (int i = 0; i < objInfo.size(); i++) {
-            cout << " 번호 : " << i << endl;
-            cout << " 이름 : " << objInfo[i].name << endl;
-            cout << " 정점 개수 : " << objInfo[i].vertices.size() << endl;
-            cout << " 노말 벡터 개수 : " << objInfo[i].normals.size() << endl;
-            cout << " uv 개수 : " << objInfo[i].uvs.size() << endl;
-            cout << " 면 정점 개수 : " << objInfo[i].faces_vertices.size() << endl;
-            cout << " 면 uv 개수 : " << objInfo[i].faces_uvs.size() << endl;
-            cout << " 면 노말 벡터 개수 : " << objInfo[i].faces_normals.size() << endl;
-            cout << "\n----------------------" << endl;
-        }
+
+            
+
 
 
     }

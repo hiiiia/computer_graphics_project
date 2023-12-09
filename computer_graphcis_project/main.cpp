@@ -28,7 +28,7 @@ static int SpinAngle = 0;
 
 Sea sea;
 OakCask oak1;
-//OakCask oak2;
+OakCask oak2;
 //OakCask oak3;
 Skybox skybox;
 Night_sphere night_sphere;
@@ -37,6 +37,7 @@ void InitLight() {
     GLfloat light0_ambient[] = { 0.5, 0.5, 0.5, 1.0 };     //조명 특성
     GLfloat light0_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
     GLfloat light0_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light0_position[] = { 1.0, 1.0, 5.0, 1.0 };
 
     glShadeModel(GL_SMOOTH); //구로 셰이딩
     glEnable(GL_DEPTH_TEST); //깊이 버퍼 활성화
@@ -45,6 +46,7 @@ void InitLight() {
     glLightfv(GL_LIGHT0, GL_AMBIENT, light0_ambient); //주변광 설정
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse); //확산광 설정
     glLightfv(GL_LIGHT0, GL_SPECULAR, light0_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
     /// <summary>
     /// 
     /// </summary>
