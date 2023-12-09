@@ -12,6 +12,7 @@
 #include "glaux.h"
 #include <gl/glut.h>
 #include "LoadObj.h"
+#include "LoadTex.h"
 #include <random>
 
 #define PI 3.1415926
@@ -22,61 +23,6 @@
 using namespace glm;
 using namespace std;
 
-class LoadTexture {
-public:
-	unsigned int MyTextureObject[1 ];
-	AUX_RGBImageRec* pTextureImage[1];
-
-	AUX_RGBImageRec* LoadBMP(const char* Filename) {
-		FILE* File = NULL;
-		if (!Filename) return NULL;
-		//File = fopen(Filename, "r");
-		if (fopen_s(&File, Filename, "r") == 0) {
-			fclose(File);
-			return auxDIBImageLoad(Filename);	     // ���Ϸκ��� �޸𸮷�
-		}
-		return NULL;
-	}
-
-	int LoadGLTextures(const char* szFilePath) {       //������ �ε��ϰ� �ؽ��ķ� ��ȯ
-		int Status = FALSE;
-		glClearColor(0.0, 0.0, 0.0, 0.5);
-		memset(pTextureImage, 0, sizeof(void*) * 1);    //�����͸� �η�
-
-		if (pTextureImage[0] = LoadBMP(szFilePath)) {   //��Ʈ���� �ε��ϰ� ����Ȯ��
-			Status = TRUE;                              //���� �÷��� True��
-			glGenTextures(1, &MyTextureObject[0]);      //�ؽ��� ����
-			glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
-			glTexImage2D(GL_TEXTURE_2D, 0, 3,
-				pTextureImage[0]->sizeX, pTextureImage[0]->sizeY,
-				0, GL_RGB, GL_UNSIGNED_BYTE, pTextureImage[0]->data);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glEnable(GL_TEXTURE_2D);
-		}
-
-		if (pTextureImage[0]) {                 //�ؽ��İ� �����ϸ�
-			if (pTextureImage[0]->data) {       //�ؽ��� ������ �����ϸ�
-				free(pTextureImage[0]->data);   //�ؽ��� ������� �ݳ�
-			}
-			free(pTextureImage[0]);             //�ؽ��� �ݳ�
-		}
-		return Status;
-	}
-
-	void Load(const char* FilePath) {
-
-		if (LoadGLTextures(FilePath)) {
-			cout << FilePath << " : Load Success :)" << endl;
-		}
-		else {
-			cout << FilePath << " : Load Failed :(" << endl;
-		}
-
-		glEnable(GL_TEXTURE_2D);
-	}
-
-};
 
 class raft {
 
@@ -100,14 +46,13 @@ class OakCask : public MovingObj {
 public:
 	
 	LoadObj4 obj;
-	LoadTexture _LoadTexture;
 	OakCask() {
 		Total_OakCask_Count += 1;
 		obj.Load("Images/objs/Wooden_Barrel/wood_barrel3.obj");
 		obj.printInfo();
-		cout << "\n\n오크통 객체 생성 완료 :: 총 개수 - " << Total_OakCask_Count<<"\n\n" << endl;
-		_LoadTexture.Load("Images/water.bmp");
-		cout << "zzzzz : " << _LoadTexture.MyTextureObject[0] << endl;
+		//cout << "\n\n오크통 객체 생성 완료 :: 총 개수 - " << Total_OakCask_Count<<"\n\n" << endl;
+		//_LoadTexture.Load("Images/water.bmp");
+		//cout << "zzzzz : " << _LoadTexture.MyTextureObject[0] << endl;
 	}
 
 	void Move() override {
@@ -125,7 +70,7 @@ public:
 		GLfloat oak_spe[] = { 1.0, 1.0 , 1.0, 1.0 };
 
 		glEnable(GL_TEXTURE_2D);
-		glBindTexture(GL_TEXTURE_2D, _LoadTexture.MyTextureObject[0]);
+		//glBindTexture(GL_TEXTURE_2D, _LoadTexture.MyTextureObject[0]);
 
 
 		glPushMatrix();
@@ -219,14 +164,14 @@ int OakCask::Total_OakCask_Count = 0;
 
 class Sea {
 public:
-	LoadTexture _loadTexture;
+	//LoadTexture _loadTexture;
 	float vertices[SeaSize][SeaSize][SeaSize];
 
 	void init() {
 
-		_loadTexture.Load("Images/water.bmp");
-		cout << "zzzzz : " << _loadTexture.MyTextureObject[0] << endl;
-		glEnable(GL_TEXTURE_2D);
+		//_loadTexture.Load("Images/water.bmp");
+		//cout << "zzzzz : " << _loadTexture.MyTextureObject[0] << endl;
+		//glEnable(GL_TEXTURE_2D);
 		
 	}
 
@@ -247,8 +192,8 @@ public:
 		// 2. move vertexPos
 
 
-		
-		glBindTexture(GL_TEXTURE_2D, _loadTexture.MyTextureObject[0]);
+		cout << LoadTex::MyTextureObject[6];
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[6]);
 		float timeTmp = 0.0f;
 
 		for (int i = 0; i < SeaSize; i++) {

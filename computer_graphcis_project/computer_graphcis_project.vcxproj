@@ -162,6 +162,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadObj.h" />
+    <ClInclude Include="LoadTex.h" />
     <ClInclude Include="night_sphere.h" />
     <ClInclude Include="skybox.h" />
     <ClInclude Include="stb_image.h" />

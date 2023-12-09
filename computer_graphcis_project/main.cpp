@@ -18,6 +18,7 @@
 #include <time.h>
 
 #include "skybox.h"
+#include "LoadTex.h"
 #include "night_sphere.h"
 camera myCamera;
 
@@ -26,6 +27,7 @@ int windowHeight, windowWidth;
 
 static int SpinAngle = 0;
 
+LoadTex loadTex;
 Sea sea;
 OakCask oak1;
 OakCask oak2;
@@ -100,7 +102,7 @@ void MyDisplay() {
     glDisable(GL_LIGHTING);
 
 
-    skybox.MakeSky(10);
+    //skybox.MakeSky(10);
     //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
     glEnable(GL_LIGHTING); 
@@ -198,8 +200,8 @@ int main(int argc, char** argv) {
     srand((unsigned int)time(NULL));
     
     sea.init();
-    skybox.init();
-    night_sphere.init();
+    //skybox.init();
+    //night_sphere.init();
     
     //oak1.DrawObj(1.f, 1.f, 0.f);
     
