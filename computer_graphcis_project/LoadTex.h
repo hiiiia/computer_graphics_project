@@ -72,6 +72,8 @@ public:
 		LoadGLTextures("snow_terrian/left.bmp", 5);
 		LoadGLTextures("Images/water.bmp", 6);
 		LoadGLTextures("Images/wood2.bmp", 7);
+		LoadGLTextures("Images/wood3.jpg", 8);
+		LoadGLTextures("Images/raft.png", 9);
 	}
 
 };

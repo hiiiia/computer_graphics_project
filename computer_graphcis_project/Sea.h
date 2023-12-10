@@ -25,11 +25,86 @@ using namespace std;
 
 
 class Raft {
-	
+public:
+	float DownRaftSzie = 1.5f;
 	LoadObj4 obj;
 
+	void DrawObj() {
+		GLfloat oak_amb[] = { 0.1, 0.1, 0.1, 1.0 };
+		GLfloat oak_dif[] = { 0.5, 0.5, 0.5, 1.0 };
+		GLfloat oak_spe[] = { 1.0, 1.0 , 1.0, 1.0 };
+
+		glEnable(GL_TEXTURE_2D);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[8]);
+
+
+		glPushMatrix();
+		glPushMatrix();
+
+		glTranslatef(0, 0, -0.125f);
+		glScalef(1.5, 2.5, 1.0);
+		glRotatef(90, 1, 0, 0);
+
+		glPushMatrix();
+		glMaterialfv(GL_FRONT, GL_AMBIENT, oak_amb);
+		glMaterialfv(GL_FRONT, GL_DIFFUSE, oak_dif);
+		glMaterialfv(GL_FRONT, GL_SPECULAR, oak_spe);
+
+		for (int j = 0; j < obj.objInfo.faces_vertices.size(); j++) {
+
+			vec3 no(0, 0, 0);
+			for (int k = 0; k < 4; k++) {
+				vec3 p = obj.objInfo.normals[obj.objInfo.faces_normals[j][k]];
+
+				no.x += p.x;
+				no.y += p.y;
+				no.z += p.z;
+			}
+
+			no.x /= 4;
+			no.y /= 4;
+			no.z /= 4;
+
+
+			glBegin(GL_QUADS);
+			glNormal3f(no.x, no.y, no.z);
+			vec3 p1 = obj.objInfo.vertices[obj.objInfo.faces_vertices[j][0]];
+			vec3 p2 = obj.objInfo.vertices[obj.objInfo.faces_vertices[j][1]];
+			vec3 p3 = obj.objInfo.vertices[obj.objInfo.faces_vertices[j][2]];
+			vec3 p4 = obj.objInfo.vertices[obj.objInfo.faces_vertices[j][3]];
+
+			glTexCoord2f(0, 0);
+			glVertex3f(p1[0] / DownRaftSzie, p1[1] / DownRaftSzie, p1[2] / DownRaftSzie);
+
+			glTexCoord2f(1.0, 0);
+			glVertex3f(p2[0] / DownRaftSzie, p2[1] / DownRaftSzie, p2[2] / DownRaftSzie);
+
+			glTexCoord2f(0, 1.0);
+			glVertex3f(p3[0] / DownRaftSzie, p3[1] / DownRaftSzie, p3[2] / DownRaftSzie);
+
+			glTexCoord2f(1.0, 1.0);
+			glVertex3f(p4[0] / DownRaftSzie, p4[1] / DownRaftSzie, p4[2] / DownRaftSzie);
+
+			/*for (int k = 0; k < 4; k++) {
+				vec3 p = obj.objInfo.vertices[obj.objInfo.faces_vertices[j][k]];
+				vec2 uv = obj.objInfo.uvs[obj.objInfo.faces_uvs[j][k]];
+				glTexCoord2f(uv.x, uv.y);
+				glVertex3f(p[0] / DownRaftSzie, p[1] / DownRaftSzie, p[2] / DownRaftSzie);
+			}*/
+			glEnd();
+
+		}
+
+
+
+		glPopMatrix();
+		glPopMatrix();
+		glPopMatrix();
+
+	}
+
 	Raft() {
-		obj.Load("Images/objs/raft/raft.obj");
+		obj.Load("Images/objs/raft/raft2.obj");
 	}
 };
 
@@ -212,14 +287,11 @@ public:
 	//LoadTexture _loadTexture;
 	float vertices[SeaSize][SeaSize][SeaSize];
 	vector <OakCask> Oaks;
-	vector <Raft> raft;
+	Raft raft;
 
 	void init() {
-
-		//_loadTexture.Load("Images/water.bmp");
-		//cout << "zzzzz : " << _loadTexture.MyTextureObject[0] << endl;
-		//glEnable(GL_TEXTURE_2D);
 		
+
 		OakCask oak1(4, -6, 0, 1);
 		OakCask oak2(5, -3.5, 0, 2);
 		OakCask oak3(4, -1.5, 0, 1.2);
@@ -356,6 +428,7 @@ public:
 	void Update(float time) {
 
 		DrawSea(time, 1, 20, 25);
+		raft.DrawObj();
 
 		for (int i = 0; i < 8; i++) {
 			Oaks[i].Move(time);
