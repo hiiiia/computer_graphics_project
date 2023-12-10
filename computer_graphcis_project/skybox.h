@@ -30,18 +30,6 @@ public:
 	unsigned int MyTextureObject[TEXTURE_NUM];
 	GLint g_textureID[1];
 
-	AUX_RGBImageRec* pTextureImage = NULL;
-
-	AUX_RGBImageRec* LoadBMP(const char* Filename) {
-		FILE* File = NULL;
-		if (!Filename) return NULL;
-		//File = fopen(Filename, "r");
-		if (fopen_s(&File, Filename, "r") == 0) {
-			fclose(File);
-			return auxDIBImageLoad(Filename);	     // ���Ϸκ��� �޸𸮷�
-		}
-		return NULL;
-	}
 
 	int LoadGLTextures(const char* szFilePath, int number) {       //������ �ε��ϰ� �ؽ��ķ� ��ȯ
 		int width, height, nrChannels;
@@ -54,6 +42,7 @@ public:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			printf_s("\n%s %d %d %d\n", szFilePath, width, height, nrChannels);
 			stbi_image_free(data);
+			//cout << "텍스쳐 번호 : " << number << " 텍스처 내용 : " << MyTextureObject[number] << endl;
 			return true;
 		}
 		else {
@@ -66,7 +55,7 @@ public:
 	void init() {
 		int Status = FALSE;
 
-		if (
+		/*if (
 			LoadGLTextures("snow_terrian/front.bmp", 0) &&
 			LoadGLTextures("snow_terrian/back.bmp", 1) &&
 			LoadGLTextures("snow_terrian/top.bmp", 2) &&
@@ -78,7 +67,7 @@ public:
 		}
 		else {
 			printf_s("\nsky Image Load error\n");
-		}
+		}*/
 
 		glEnable(GL_TEXTURE_2D);
 	}
@@ -97,7 +86,7 @@ public:
 
 		//printf_s("%d %d", MyTextureObject[0], MyTextureObject[1]);
 		// Front face
-		glBindTexture(GL_TEXTURE_2D, MyTextureObject[0]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[0]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(skybox_size, -skybox_size, skybox_size);
@@ -107,7 +96,7 @@ public:
 		glEnd();
 
 		// Back face
-		glBindTexture(GL_TEXTURE_2D, MyTextureObject[1]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[1]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, -skybox_size);
@@ -116,7 +105,7 @@ public:
 		glEnd();
 
 		// Top face
-		glBindTexture(GL_TEXTURE_2D, MyTextureObject[2]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[2]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-skybox_size, skybox_size, -skybox_size);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-skybox_size, skybox_size, skybox_size);
@@ -125,7 +114,7 @@ public:
 		glEnd();
 
 		// Bottom face
-		glBindTexture(GL_TEXTURE_2D, MyTextureObject[3]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[3]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(-skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, skybox_size);
@@ -134,7 +123,7 @@ public:
 		glEnd();
 
 		// Right face
-		glBindTexture(GL_TEXTURE_2D, MyTextureObject[4]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[4]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(skybox_size, skybox_size, -skybox_size);
@@ -144,7 +133,7 @@ public:
 		glEnd();
 
 		// Left face
-		glBindTexture(GL_TEXTURE_2D, MyTextureObject[5]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[5]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, skybox_size);

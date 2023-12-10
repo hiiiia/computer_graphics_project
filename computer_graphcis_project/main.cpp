@@ -29,8 +29,9 @@ static int SpinAngle = 0;
 
 LoadTex loadTex;
 Sea sea;
-OakCask oak1;
-OakCask oak2;
+
+
+
 //OakCask oak3;
 Skybox skybox;
 Night_sphere night_sphere;
@@ -78,9 +79,12 @@ void MyDisplay() {
     preMouse = currentMouse;
 
     //get camera variables from camera class
+    
     vec3 eye = myCamera.eye;
     vec3 at = myCamera.at;
     vec3 up = myCamera.up;
+
+   
 
     //set projection
     glMatrixMode(GL_PROJECTION);
@@ -102,7 +106,7 @@ void MyDisplay() {
     glDisable(GL_LIGHTING);
 
 
-    //skybox.MakeSky(10);
+    skybox.MakeSky(10);
     //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
     glEnable(GL_LIGHTING); 
@@ -111,19 +115,11 @@ void MyDisplay() {
     //glLightfv(GL_LIGHT0, GL_POSITION , testlightPosition);
 
     
-    sea.DrawSea(SpinAngle, 1, 20, 25);
-    oak1.DrawObj(1.f, 1.f, 0.f);
+    sea.Update(SpinAngle);
+
     //oak2.DrawObj(1.f, -1.f, 0.f);
     //oak3.DrawObj(-1.f, -1.f, 0.f);
 
-
-    glutSolidSphere(0.5,100,100);
-    glTranslatef(0, 0, 2.f);
-    glutSolidSphere(0.5, 100, 100);
-    glTranslatef(2.f, 0, 0);
-    glutSolidSphere(0.5, 100, 100);
-    glTranslatef(0, 2.f, 0);
-    glutSolidSphere(0.5, 100, 100);
     glutSwapBuffers();
 
 }
@@ -200,10 +196,10 @@ int main(int argc, char** argv) {
     srand((unsigned int)time(NULL));
     
     sea.init();
-    //skybox.init();
+    skybox.init();
+    loadTex.init();
     //night_sphere.init();
-    
-    //oak1.DrawObj(1.f, 1.f, 0.f);
+
     
 
     InitLight();

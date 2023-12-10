@@ -14,84 +14,65 @@
 #include "LoadObj.h"
 #include <random>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
+
 #define PI 3.1415926
-#define TEXTURE_NUM 1
-#define SeaSize 150
-#define SeaSize_Dense 10.0
+#define TEXTURE_NUM 20
+
 
 using namespace glm;
 using namespace std;
 
 class LoadTex {
 public:
-	static unsigned int MyTextureObject[20];
-	AUX_RGBImageRec* pTextureImage[20];
+	static unsigned int MyTextureObject[TEXTURE_NUM];
 
-	int count = 0;
-
-	AUX_RGBImageRec* LoadBMP(const char* Filename) {
-		FILE* File = NULL;
-		if (!Filename) return NULL;
-		//File = fopen(Filename, "r");
-		if (fopen_s(&File, Filename, "r") == 0) {
-			fclose(File);
-			return auxDIBImageLoad(Filename);	     // ????κ??? ?????
-		}
-		return NULL;
-	}
-
-	int LoadGLTextures(const char* szFilePath) {       //?????? ?ε???? ?????? ???
-		int Status = FALSE;
-		glClearColor(0.0, 0.0, 0.0, 0.5);
-		//memset(pTextureImage, 0, sizeof(void*) * 20);    //??????? ?η?
-
-		if (pTextureImage[count] = LoadBMP(szFilePath)) {   //??????? ?ε???? ???????
-			Status = TRUE;                              //???? ?÷??? True??
-			glGenTextures(1, &MyTextureObject[count]);      //????? ????
-			glBindTexture(GL_TEXTURE_2D, MyTextureObject[count]);
-			glTexImage2D(GL_TEXTURE_2D, 0, 3,
-				pTextureImage[count]->sizeX, pTextureImage[count]->sizeY,
-				0, GL_RGB, GL_UNSIGNED_BYTE, pTextureImage[count]->data);
+	int LoadGLTextures(const char* szFilePath, int number) {       //?????? ?ε???? ?????? ???
+		int width, height, nrChannels;
+		unsigned char* data = stbi_load(szFilePath, &width, &height, &nrChannels, 0);
+		if (data) {
+			glGenTextures(1, MyTextureObject + number);
+			glBindTexture(GL_TEXTURE_2D, *(MyTextureObject + number));
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glEnable(GL_TEXTURE_2D);
-
-			count++;
-		}
-
-		if (pTextureImage[count]) {                 //?????? ???????
-			if (pTextureImage[count]->data) {       //????? ?????? ???????
-				free(pTextureImage[count]->data);   //????? ??????? ???
-			}
-			free(pTextureImage[count]);             //????? ???
-		}
-		return Status;
-	}
-
-	void Load(const char* FilePath) {
-
-		if (LoadGLTextures(FilePath)) {
-			cout << FilePath << " : Load Success :)" << endl;
+			printf_s("\n%s %d %d %d\n", szFilePath, width, height, nrChannels);
+			stbi_image_free(data);
+			cout << "텍스쳐 번호 : " << number << " 텍스처 내용 : " << MyTextureObject[number] << endl;
+			return true;
 		}
 		else {
-			cout << FilePath << " : Load Failed :(" << endl;
+			std::cerr << "Failed to load texture: " << szFilePath << std::endl;
+			stbi_image_free(data);
+			return false;
 		}
-
-		glEnable(GL_TEXTURE_2D);
 	}
 
 	LoadTex() {
+
 		
-		Load("snow_terrian/front.bmp");
-		Load("snow_terrian/top.bmp");
-		Load("snow_terrian/bottom.bmp");
-		Load("snow_terrian/back.bmp");
-		Load("snow_terrian/right.bmp");
-		Load("snow_terrian/left.bmp");
-		Load("Images/water.bmp");
-		Load("Images/wood2.bmp");
+		/*LoadTexture2("snow_terrian/front.bmp");
+		LoadTexture2("snow_terrian/top.bmp");
+		LoadTexture2("snow_terrian/bottom.bmp");
+		LoadTexture2("snow_terrian/back.bmp");
+		LoadTexture2("snow_terrian/right.bmp");
+		LoadTexture2("snow_terrian/left.bmp");
+		LoadTexture2("Images/water.bmp");
+		LoadTexture2("Images/wood2.bmp");*/
 	}
 
+	void init() {
+		LoadGLTextures("snow_terrian/front.bmp", 0);
+		LoadGLTextures("snow_terrian/back.bmp", 1);
+		LoadGLTextures("snow_terrian/top.bmp", 2);
+		LoadGLTextures("snow_terrian/bottom.bmp", 3);
+		LoadGLTextures("snow_terrian/right.bmp", 4);
+		LoadGLTextures("snow_terrian/left.bmp", 5);
+		LoadGLTextures("Images/water.bmp", 6);
+		LoadGLTextures("Images/wood2.bmp", 7);
+	}
 
 };
-unsigned int LoadTex::MyTextureObject[20] = { 0 };
+unsigned int LoadTex::MyTextureObject[TEXTURE_NUM] = { 0 };
