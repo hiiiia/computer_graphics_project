@@ -24,8 +24,13 @@ using namespace glm;
 using namespace std;
 
 
-class raft {
+class Raft {
+	
+	LoadObj4 obj;
 
+	Raft() {
+		obj.Load("Images/objs/raft/raft.obj");
+	}
 };
 
 class MovingObj {
@@ -207,12 +212,14 @@ public:
 	//LoadTexture _loadTexture;
 	float vertices[SeaSize][SeaSize][SeaSize];
 	vector <OakCask> Oaks;
+	vector <Raft> raft;
 
 	void init() {
 
 		//_loadTexture.Load("Images/water.bmp");
 		//cout << "zzzzz : " << _loadTexture.MyTextureObject[0] << endl;
 		//glEnable(GL_TEXTURE_2D);
+		
 		OakCask oak1(4, -6, 0, 1);
 		OakCask oak2(5, -3.5, 0, 2);
 		OakCask oak3(4, -1.5, 0, 1.2);
