@@ -118,6 +118,137 @@ void drawSpheres() {
 
 
 
+//
+//struct StarInfo {
+//    float x, y, z;  // 현재 위치
+//    float targetX, targetY, targetZ;  // 목표 위치
+//    float speed;  // 이동 속도
+//};
+//
+//std::vector<StarInfo> stars;
+//
+//void initStars(int numStars) {
+//    stars.clear();  // 벡터 초기화
+//
+//    for (int i = 0; i < numStars; ++i) {
+//        StarInfo star;
+//        star.x = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
+//        star.y = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
+//        star.z = 40.0;  // 고정된 Z 좌표
+//
+//        star.targetX = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
+//        star.targetY = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
+//        star.targetZ = 30.0;  // 고정된 Z 좌표
+//
+//        star.speed = 0.1;
+//
+//        stars.push_back(star);  // 벡터에 추가
+//    }
+//}
+//
+//
+//
+//void moveStars() {
+//    for (auto& star : stars) {
+//        // 현재 위치에서 목표 위치로 이동
+//        float dx = star.targetX - star.x;
+//        float dy = star.targetY - star.y;
+//        float dz = star.targetZ - star.z;
+//        float distance = sqrt(dx * dx + dy * dy + dz * dz);
+//
+//        if (distance > 0.1) {  // 이동이 덜 된 경우에만 이동
+//            float factor = star.speed / distance;
+//            star.x += dx * factor;
+//            star.y += dy * factor;
+//            star.z += dz * factor;
+//        }
+//        else {  // 목표 위치에 도달하면 새로운 목표 위치 설정
+//            star.targetX = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
+//            star.targetY = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
+//        }
+//    }
+//}
+//
+//void drawStars() {
+//    for (const auto& star : stars) {
+//        glPushMatrix();
+//        glTranslatef(star.x, star.y, star.z);
+//        glColor3f(1.0, 1.0, 1.0);  // 흰색
+//        glutSolidSphere(0.5, 10, 10);
+//        glPopMatrix();
+//    }
+//}
+
+struct FallingStar {
+    float x, y, z;  // 현재 위치
+    float speedX, speedY, speedZ;  // 이동 속도
+    float size;     // 크기
+    bool active;    // 활성 여부
+};
+
+std::vector<FallingStar> fallingStars;
+
+void initFallingStars(int numStars) {
+    fallingStars.clear();  // 벡터 초기화
+
+    for (int i = 0; i < numStars; ++i) {
+        FallingStar star;
+        star.x = 20.0;
+        star.y = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
+        star.z = 20.0;
+
+        star.speedX = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // X 방향 속도: 0에서 5.0 사이
+        star.speedY = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // Y 방향 속도: 0에서 5.0 사이
+        star.speedZ = static_cast<float>(rand()) / RAND_MAX * 2.0*0.1;  // Z 방향 속도: 0에서 2.0 사이
+        star.size = 0.1;
+        star.active = false;
+
+        fallingStars.push_back(star);  // 벡터에 추가
+    }
+}
+
+void moveFallingStars() {
+    for (auto& star : fallingStars) {
+        if (star.active) {
+            star.x += star.speedX;
+            star.y += star.speedY;
+            star.z -= star.speedZ;
+            star.size -= 0.02;  // 크기를 감소시켜 사라지는 효과
+
+            // 크기가 0보다 작아지면 비활성화
+            if (star.size < 0.0) {
+                star.active = false;
+                star.size = 0.0;  // 크기가 음수가 되지 않도록 보정
+            }
+        }
+        else {
+            // 일정 간격으로 떨어지는 별똥별이 나타나도록 설정
+            if (rand() % 100 == 0) {
+                star.active = true;
+                star.x = 20.0;
+                star.y = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
+                star.z = 20.0;
+                star.size = static_cast<float>(rand()) / RAND_MAX * 2.0 + 1.0;
+            }
+        }
+    }
+}
+
+void drawFallingStars() {
+    for (const auto& star : fallingStars) {
+        if (star.active) {
+            glPushMatrix();
+            glTranslatef(star.x, star.y, star.z);
+            glColor3f(1.0, 1.0, 1.0);  // 흰색
+            glutSolidSphere(star.size, 10, 10);
+            glPopMatrix();
+        }
+    }
+}
+
+
+
+
 void MyDisplay() {
 
 
@@ -180,6 +311,13 @@ void MyDisplay() {
 
 
     drawSpheres();
+
+
+    moveFallingStars();
+    drawFallingStars();
+
+    //moveStars();
+    //drawStars();
 
     //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
@@ -278,8 +416,8 @@ int main(int argc, char** argv) {
 
     // 구체 초기화
     initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
+    initFallingStars(10);
     //night_sphere.init();
-
     
 
     InitLight();
