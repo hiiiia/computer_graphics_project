@@ -74,6 +74,14 @@ public:
 		LoadGLTextures("Images/wood2.bmp", 7);
 		LoadGLTextures("Images/wood3.jpg", 8);
 		LoadGLTextures("Images/raft.png", 9);
+
+		LoadGLTextures("Data/skybox2/front.bmp", 10);
+		LoadGLTextures("Data/skybox2/back.bmp", 11);
+		LoadGLTextures("Data/skybox2/top.bmp", 12);
+		LoadGLTextures("Data/skybox2/bottom.bmp", 13);
+		LoadGLTextures("Data/skybox2/right.bmp", 14);
+		LoadGLTextures("Data/skybox2/left.bmp", 15);
+
 	}
 
 };

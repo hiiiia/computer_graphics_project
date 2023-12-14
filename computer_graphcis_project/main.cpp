@@ -20,13 +20,18 @@
 #include "skybox.h"
 #include "LoadTex.h"
 #include "night_sphere.h"
+
+int sphere_num =1000;
 camera myCamera;
 
 vec2 preMouse, currentMouse;
 int windowHeight, windowWidth;
 
+
+
 static int SpinAngle = 0;
 
+static float Spin_star = 0;
 LoadTex loadTex;
 Sea sea;
 
@@ -55,9 +60,69 @@ void InitLight() {
     /// </summary>
 }
 
+
+struct SphereInfo {
+    float x, y, z;  // 위치
+    float r, g, b, a;  // 색상 및 투명도
+};
+
+std::vector<SphereInfo> spheres;
+
+void initSpheres(int numSpheres) {
+    spheres.clear();  // 벡터 초기화
+
+    for (int i = 0; i < numSpheres; ++i) {
+        SphereInfo sphere;
+        const float innerRadius = 80.0;
+        const float outerRadius = 85.0;
+
+        sphere.x = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
+        sphere.y = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
+        sphere.z = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
+
+        while (sqrt(sphere.x * sphere.x + sphere.y * sphere.y + sphere.z * sphere.z) < innerRadius) {
+            // 반지름이 innerRadius 이상인지 확인하고, 아니면 다시 무작위 좌표 생성
+            sphere.x = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
+            sphere.y = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
+            sphere.z = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
+        }
+
+        sphere.r = static_cast<float>(rand()) / RAND_MAX;
+        sphere.g = static_cast<float>(rand()) / RAND_MAX;
+        sphere.b = static_cast<float>(rand()) / RAND_MAX;
+        sphere.a = static_cast<float>(rand()) / RAND_MAX;
+
+        spheres.push_back(sphere);  // 벡터에 추가
+    }
+}
+
+void drawSpheres() {
+
+    glPushMatrix();
+
+    glTranslated(0,0,-50);
+    glRotatef(Spin_star, 0.0, 1.0, 0.0);
+
+    for (const auto& sphere : spheres) {
+        glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // 투명도 적용
+        glPushMatrix();
+        glTranslatef(sphere.x, sphere.y, sphere.z);
+        glutSolidSphere(0.1, 20, 20);
+        glPopMatrix();
+    }
+
+    glPopMatrix();
+    glColor4f(1,1,1,1);
+
+}
+
+
+
 void MyDisplay() {
 
-    
+
+
+
 
     //재질 설정
     GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -84,11 +149,13 @@ void MyDisplay() {
     vec3 at = myCamera.at;
     vec3 up = myCamera.up;
 
-   
+
 
     //set projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
+
 
     gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0, 41.0);
 
@@ -96,17 +163,24 @@ void MyDisplay() {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+
+
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
 
     GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ///
     //put your code here
     glDisable(GL_LIGHTING);
 
+    glClear(GL_COLOR_BUFFER_BIT);
 
-    skybox.MakeSky(10);
+
+    skybox.MakeSky(20);
+
+
+    drawSpheres();
+
     //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
     glEnable(GL_LIGHTING); 
@@ -117,10 +191,12 @@ void MyDisplay() {
     
     sea.Update(SpinAngle);
 
+
     //oak2.DrawObj(1.f, -1.f, 0.f);
     //oak3.DrawObj(-1.f, -1.f, 0.f);
 
     glutSwapBuffers();
+
 
 }
 
@@ -133,8 +209,9 @@ void MyReshape(int w, int h) {
 
 void MyTimer(int Value) {
     SpinAngle = (SpinAngle + 3) % 360;
+    Spin_star = (Spin_star + 0.05) ;
     glutPostRedisplay();
-    glutTimerFunc(40, MyTimer, 1);
+    glutTimerFunc(10, MyTimer, 1);
 }
 
 void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
@@ -181,7 +258,7 @@ void MyKeyboard(unsigned char key, int x, int y) {
 
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(800, 800);
     glutInitWindowPosition(200, 200);
     glutCreateWindow("openGL Sample Drawing");
@@ -198,6 +275,9 @@ int main(int argc, char** argv) {
     sea.init();
     skybox.init();
     loadTex.init();
+
+    // 구체 초기화
+    initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
     //night_sphere.init();
 
     
