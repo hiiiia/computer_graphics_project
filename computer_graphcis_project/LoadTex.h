@@ -82,6 +82,11 @@ public:
 		LoadGLTextures("Data/skybox2/right.bmp", 14);
 		LoadGLTextures("Data/skybox2/left.bmp", 15);
 
+
+		LoadGLTextures("Data/Planets/Sun.bmp", 16);
+		LoadGLTextures("Data/Planets/Moon.bmp", 17);
+
+
 	}
 
 };

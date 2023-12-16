@@ -150,11 +150,7 @@
   <ItemGroup>
     <ClCompile Include="android.cpp" />
     <ClCompile Include="glad.c" />
-    <ClCompile Include="hw6_1.cpp" />
-    <ClCompile Include="hw6_2.cpp" />
-    <ClCompile Include="hw7.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="skybox_test.cpp" />
     <ClCompile Include="obj.cpp" />
   </ItemGroup>
   <ItemGroup>

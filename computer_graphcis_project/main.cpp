@@ -27,13 +27,17 @@ camera myCamera;
 vec2 preMouse, currentMouse;
 int windowHeight, windowWidth;
 
+vec3 tmp_loc;
 
+static int skybox_size = 20;
 
 static int SpinAngle = 0;
 
 static float Spin_sun_moon = 0;
 
 static float Spin_star = 0;
+
+static bool Ray_flag = false;
 LoadTex loadTex;
 Sea sea;
 
@@ -103,8 +107,8 @@ void initSpheres(int numSpheres) {
 
     for (int i = 0; i < numSpheres; ++i) {
         SphereInfo sphere;
-        const float innerRadius = 80.0;
-        const float outerRadius = 85.0;
+        float innerRadius = skybox_size * 4;
+        float outerRadius = skybox_size * 4 - 5;
 
         sphere.x = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
         sphere.y = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
@@ -163,6 +167,7 @@ void drawSpheres() {
         glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // 투명도 적용
 
 
+        //glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
             // 재질 설정
         glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
@@ -312,32 +317,46 @@ void drawFallingStars() {
 }
 
 
+
+void draw_with_Texture2(float radius, int slices) {
+
+
+    GLUquadric* obj = gluNewQuadric();
+    gluQuadricTexture(obj, GL_TRUE);
+    gluQuadricNormals(obj, GLU_SMOOTH);
+    gluSphere(obj, radius, slices, slices);
+    gluDeleteQuadric(obj);
+
+}
+
+
 void draw_sun_moon() {
     glPushMatrix();
 
-    GLfloat sub_ligth_pos[] = { 60, 0.0 ,-20.0 ,1 };
-    GLfloat moon_ligth_pos[] = { -60, 0.0 ,-20.0 ,1 };
-
+    GLfloat sub_ligth_pos[] = { skybox_size*3, 0.0 ,-skybox_size ,1 };
+    GLfloat moon_ligth_pos[] = { -skybox_size*3, 0.0 ,-skybox_size ,1 };
+    GLfloat radius = skybox_size*3;
+    float planets_rad = 1;
     glTranslated(0, 0, -22);
 
     //glColor3f(1, 0, 0);
 
 
-    //glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    //glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    //glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+    glEnable(GL_TEXTURE_2D);
+
 
     //glutSolidSphere(1, 10, 10);
 
-    glRotatef(Spin_sun_moon,0, 1, 0);
+    glRotatef(Spin_sun_moon*10,0, 1, 0);
     //glRotated(90, 0, 0, 1);
 
         glPushMatrix();
-        glTranslated(60, 0, 0);
 
-        glutSolidSphere(2, 100, 100);
+        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[16]);
+
+        glTranslated(radius, 0, 0);
+
+        draw_with_Texture2(planets_rad, 100);
 
         glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
         glEnable(GL_LIGHT1);
@@ -350,9 +369,14 @@ void draw_sun_moon() {
 
         glPushMatrix();
 
-        glTranslated(-60, 0, 0);
 
-        glutSolidSphere(2, 100, 100);
+        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[17]);
+
+
+        glTranslated(-radius, 0, 0);
+
+        draw_with_Texture2(planets_rad, 100);
+
 
 
         glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
@@ -361,14 +385,119 @@ void draw_sun_moon() {
         //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
         //glEnable(GL_LIGHT1);
 
+
+
         glPopMatrix();
 
 
     glPopMatrix();
 
+
+    glDisable(GL_TEXTURE_2D);
+
     glColor3f(1, 1, 1);
 
 };
+
+
+bool rayBoxIntersection(const vec3& origin, const vec3& direction, const vec3& boxMin, const vec3& boxMax, float& tMin, float& tMax) {
+    vec3 invDirection = 1.0f / direction;
+
+    float t1 = (boxMin.x - origin.x) * invDirection.x;
+    float t2 = (boxMax.x - origin.x) * invDirection.x;
+    float t3 = (boxMin.y - origin.y) * invDirection.y;
+    float t4 = (boxMax.y - origin.y) * invDirection.y;
+    float t5 = (boxMin.z - origin.z) * invDirection.z;
+    float t6 = (boxMax.z - origin.z) * invDirection.z;
+
+    tMin = fmax(fmax(fmin(t1, t2), fmin(t3, t4)), fmin(t5, t6));
+    tMax = fmin(fmin(fmax(t1, t2), fmax(t3, t4)), fmax(t5, t6));
+
+    return tMax >= tMin && tMax >= 0;
+}
+
+
+
+void drawRay() {
+
+    vec3 eye = myCamera.eye;
+    vec3 direction = normalize(myCamera.eye - myCamera.at);
+
+    // Skybox의 경계 상자 (예: -40, -40, -40에서 40, 40, 40)
+    vec3 boxMin(-skybox_size*4, -skybox_size*4, -skybox_size*4);
+    vec3 boxMax(skybox_size*4, skybox_size*4, skybox_size*4);
+
+
+
+
+    // 레이 시각화 및 정보 출력
+
+    if (Ray_flag) {
+
+        float tMin, tMax;
+        bool hit = rayBoxIntersection(eye, direction, boxMin, boxMax, tMin, tMax);
+
+        if (hit) {
+
+            printf_s("Hit\n");
+            // 충돌 지점 계산
+            tmp_loc = eye + tMin * direction;
+
+            glPushMatrix();
+                glColor3f(1.0, 1.0, 0.0);
+                glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
+
+
+                SphereInfo sphere;
+
+                sphere.x = tmp_loc.x;
+                sphere.y = tmp_loc.y;
+                sphere.z = tmp_loc.z;
+
+                sphere.r = 1;
+                sphere.g = 1;
+                sphere.b = 1;
+                sphere.a = 1;
+
+                spheres.push_back(sphere);
+                //glutSolidCube(100);
+                //glColor3f(1.0, 1.0, 1.0);
+            glPopMatrix();
+
+            printf_s("Sphere size: %d \n",spheres.size());
+            printf_s("Eye: (%.2f, %.2f, %.2f)\n", eye.x, eye.y, eye.z);
+            printf_s("At: (%.2f, %.2f, %.2f)\n", direction.x, direction.y, direction.z);
+            printf_s("Ray: (%.2f, %.2f, %.2f)\n", tmp_loc.x, tmp_loc.y, tmp_loc.z);
+
+            Ray_flag = false;
+
+        }
+
+
+    }
+
+    else {
+        glPushMatrix();
+
+
+        //glColor3f(1.0, 1.0, 0.0);
+
+        //glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
+
+        //glutSolidCube(0.2);
+
+
+        //glColor3f(1.0, 1.0, 1.0);
+
+
+        glPopMatrix();
+
+    }
+
+}
+
+
+
 
 void MyDisplay() {
 
@@ -417,15 +546,15 @@ void MyDisplay() {
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
 
-    //GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
-    ///
-    //put your code here
     glDisable(GL_LIGHTING);
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClear(GL_COLOR_BUFFER_BIT);
 
 
-    skybox.MakeSky(20);
+    skybox.MakeSky(skybox_size);
+
+
+
 
     glEnable(GL_LIGHTING);
 
@@ -440,38 +569,13 @@ void MyDisplay() {
     //glPopMatrix();
 
 
-    // Light 테스트
-    //glPushMatrix();
 
-    //GLfloat sub_ligth_pos[] = {0.0, 0.0 ,0.0 ,1};
-    //
-    //glTranslated(0, 4, 0.5);
-
-    ////glColor3f(1, 0, 0);
-    //glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    //glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
-    //glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
-
-    //glutSolidSphere(0.1, 10, 10);
-
-    //glRotated(SpinAngle, 0, 0, 1);
-
-    //glTranslated(0, 20, 0);
-
-    //glutSolidSphere(0.1, 10, 10);
-
-    //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
-    //glEnable(GL_LIGHT1);
-    //glPopMatrix();
-
+    drawRay();
 
     draw_sun_moon();
 
 
     drawSpheres();
-
 
 
     //moveStars();
@@ -514,6 +618,11 @@ void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
         preMouse = vec2(X, Y);
         currentMouse = preMouse;
     }
+
+    if (Button == GLUT_RIGHT_BUTTON && State == GLUT_DOWN) {
+        Ray_flag = true;
+    }
+
 }
 
 void MyMouseMove(GLint X, GLint Y)
