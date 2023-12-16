@@ -214,19 +214,6 @@
 //
 //
 //
-//    //===============
-//
-//
-//    //glMaterialfv(GL_FRONT, GL_AMBIENT, sun_mat_amb);
-//    //glMaterialfv(GL_FRONT, GL_DIFFUSE, sun_mat_diffuse);
-//    //glMaterialfv(GL_FRONT, GL_SPECULAR, sun_mat_specular);
-//    ////glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
-//    //glMaterialfv(GL_FRONT, GL_EMISSION, sun_mat_emission);
-//
-//
-//
-//
-//
 //    glMatrixMode(GL_MODELVIEW); //set matrix mode
 //    glLoadIdentity(); //set Identity 
 //    //set view transform matrix
@@ -234,10 +221,6 @@
 //
 //    //========================================
 //    //========================================
-//    //glEnable(GL_DEPTH_TEST);
-//    //draw solar system
-//    //glEnable(GL_LIGHTING);
-//    //glColor3f(0, 1, 0);
 //
 //
 //    glMaterialfv(GL_FRONT, GL_AMBIENT, sun_mat_amb);
@@ -251,13 +234,7 @@
 //    draw_with_Texture2(0.2, 100);
 //
 //
-//    //glutWireSphere(0.2, 100, 100);
-//
 //    glEnable(GL_LIGHT0);
-//    //glDisable(GL_LIGHTING);
-//    //glDisable(GL_LIGHT0);
-//    //glDisable(GL_COLOR_MATERIAL);
-//    //glDisable(GL_DEPTH_TEST);
 //    // 
 //    //========================================
 //    //========================================
@@ -267,21 +244,6 @@
 //    //glLoadIdentity();
 //    glRotatef((GLfloat)Day, 0.0, 1.0, 0.0);
 //    glTranslatef(0.7, 0.0, 0.0);
-//    // Get the current modelview matrix
-//    //GLfloat modelviewMatrix[16];
-//    //glGetFloatv(GL_MODELVIEW_MATRIX, modelviewMatrix);
-//
-//    //// Extract the translation part
-//    //moonPosition[0] = modelviewMatrix[12];
-//    //moonPosition[1] = modelviewMatrix[13];
-//    //moonPosition[2] = modelviewMatrix[14];
-//    //moonPosition[3] = modelviewMatrix[15];
-//
-//    // Restore the previous modelview matrix
-//
-//
-// 
-//    //printf_s("%f / %f / %f /%f \n", moonPosition[0], moonPosition[1], moonPosition[2], moonPosition[3]);
 //    glPopMatrix();
 //
 //    //========================================
@@ -297,31 +259,19 @@
 //    //========================================
 //    //========================================
 //    glRotatef((GLfloat)Time, 0.0, 1.0, 0.0);
-//    //glEnable(GL_BLEND);
-//    //glEnable(GL_COLOR_MATERIAL);
-//    //glColor3f(0, 1, 0);
 //    glMaterialfv(GL_FRONT, GL_AMBIENT, earth_mat_amb);
 //    glMaterialfv(GL_FRONT, GL_DIFFUSE, earth_mat_diff);
 //    glMaterialfv(GL_FRONT, GL_SPECULAR, earth_mat_specular);
 //    glMaterialfv(GL_FRONT, GL_SHININESS, earth_shininess);
-//    //glMaterialfv(GL_FRONT, GL_EMISSION, sun_mat_emission);
 //    glBindTexture(GL_TEXTURE_2D, g_textureID[1]);
-//    //glutSolidSphere(0.2, 100, 100);
 //    draw_with_Texture2(0.1, 100);
 //    glPushMatrix();
 //
-//    //glDisable(GL_BLEND);
-//    //glDisable(GL_COLOR_MATERIAL);
 //    //========================================
 //    //========================================
 //
 //    glRotatef((GLfloat)Time, 0.0, 1.0, 0.0);
 //    glTranslatef(-0.2, 0.0, 0.0);
-//
-//    //glEnable(GL_LIGHTING);
-//    //glEnable(GL_BLEND);
-//    //glEnable(GL_COLOR_MATERIAL);
-//
 //
 //    //glColor3f(0, 0, 1);
 //
@@ -338,12 +288,6 @@
 //
 //    glEnable(GL_LIGHT1);
 //
-//
-//    //glDisable(GL_LIGHTING);
-//    //glDisable(GL_LIGHT0);
-//    //glDisable(GL_LIGHT1);
-//    //glDisable(GL_BLEND);
-//    //glDisable(GL_COLOR_MATERIAL);
 //    //========================================
 //    //========================================
 //    glPopMatrix();

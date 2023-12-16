@@ -1,4 +1,4 @@
-
+ï»¿
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -21,7 +21,7 @@
 #include "LoadTex.h"
 #include "night_sphere.h"
 
-int sphere_num =1000;
+int sphere_num =1500;
 camera myCamera;
 
 vec2 preMouse, currentMouse;
@@ -41,35 +41,53 @@ Sea sea;
 Skybox skybox;
 Night_sphere night_sphere;
 
-void InitLight() {
-    GLfloat light0_ambient[] = { 0.5, 0.5, 0.5, 1.0 };     //Á¶¸í Æ¯¼º
-    GLfloat light0_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat light0_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat light0_position[] = { 1.0, 1.0, 5.0, 1.0 };
+void initLight() {
+    glEnable(GL_LIGHTING);  // ì¡°ëª… í™œì„±í™”
 
-    glShadeModel(GL_SMOOTH); //±¸·Î ¼ÎÀÌµù
-    glEnable(GL_DEPTH_TEST); //±íÀÌ ¹öÆÛ È°¼ºÈ­
-    glEnable(GL_LIGHTING); //Á¶¸í È°¼ºÈ­
+    // ê´‘ì› í™œì„±í™”
     glEnable(GL_LIGHT0);
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light0_ambient); //ÁÖº¯±¤ ¼³Á¤
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse); //È®»ê±¤ ¼³Á¤
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light0_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
-    /// <summary>
-    /// 
-    /// </summary>
+
+    // ê´‘ì› ìœ„ì¹˜ ì„¤ì •
+    GLfloat light_position[] = {0.0, 0.0, 0.0, 1.0 };  // (x, y, z, w) - wëŠ” ê´‘ì›ì´ ë°©í–¥ ê´‘ì›ì¸ì§€ ìœ„ì¹˜ ê´‘ì›ì¸ì§€ë¥¼ ë‚˜íƒ€ëƒ„
+
+    // ê´‘ì› ìƒ‰ìƒ ì„¤ì •
+    GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
+    GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+
+    // ê´‘ì› ì„¤ì • ì ìš©
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+
+
+    glDisable(GL_LIGHT0);
+
+    glEnable(GL_LIGHT1);
+
+
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+
+    glDisable(GL_LIGHT1);
+
+    // ì¬ì§ˆ ì„¤ì • í™œì„±í™”
+    //GL_COLOR_MATERIALì„ í™œì„±í™”í•˜ë©´ glColor ëª…ë ¹ì–´ë¡œ ì„¤ì •í•œ ìƒ‰ìƒì´ ë¬¼ì²´ì˜ ì¬ì§ˆì— ì ìš©
+    //glEnable(GL_COLOR_MATERIAL);
 }
 
 
 struct SphereInfo {
-    float x, y, z;  // À§Ä¡
-    float r, g, b, a;  // »ö»ó ¹× Åõ¸íµµ
+    float x, y, z;  // ìœ„ì¹˜
+    float r, g, b, a;  // ìƒ‰ìƒ ë° íˆ¬ëª…ë„
 };
 
 std::vector<SphereInfo> spheres;
 
 void initSpheres(int numSpheres) {
-    spheres.clear();  // º¤ÅÍ ÃÊ±âÈ­
+    spheres.clear();  // ë²¡í„° ì´ˆê¸°í™”
 
     for (int i = 0; i < numSpheres; ++i) {
         SphereInfo sphere;
@@ -81,7 +99,7 @@ void initSpheres(int numSpheres) {
         sphere.z = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
 
         while (sqrt(sphere.x * sphere.x + sphere.y * sphere.y + sphere.z * sphere.z) < innerRadius) {
-            // ¹İÁö¸§ÀÌ innerRadius ÀÌ»óÀÎÁö È®ÀÎÇÏ°í, ¾Æ´Ï¸é ´Ù½Ã ¹«ÀÛÀ§ ÁÂÇ¥ »ı¼º
+            // ë°˜ì§€ë¦„ì´ innerRadius ì´ìƒì¸ì§€ í™•ì¸í•˜ê³ , ì•„ë‹ˆë©´ ë‹¤ì‹œ ë¬´ì‘ìœ„ ì¢Œí‘œ ìƒì„±
             sphere.x = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
             sphere.y = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
             sphere.z = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
@@ -90,21 +108,57 @@ void initSpheres(int numSpheres) {
         sphere.r = static_cast<float>(rand()) / RAND_MAX;
         sphere.g = static_cast<float>(rand()) / RAND_MAX;
         sphere.b = static_cast<float>(rand()) / RAND_MAX;
-        sphere.a = static_cast<float>(rand()) / RAND_MAX;
+        sphere.a = 1;
 
-        spheres.push_back(sphere);  // º¤ÅÍ¿¡ Ãß°¡
+        spheres.push_back(sphere);  // ë²¡í„°ì— ì¶”ê°€
     }
 }
+
+
+//ì¬ì§ˆ ì„¤ì •
+GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
+GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
+GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
+GLfloat mat_diffuse[] = { 0.1, 0.5, 0.8, 1.0 };
+GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+GLfloat no_shininess[] = { 0.0 };
+GLfloat low_shininess[] = { 5.0 };
+GLfloat high_shininess[] = { 100.0 };
+GLfloat mat_emission[] = { 0.3, 0.2, 0.2, 0.0 };
+
+
+GLfloat sun_mat_amb[] = { 0.2, 0 , 0, 1.0 };
+GLfloat sun_mat_diffuse[] = { 1, 0.5, 0.5, 1.0 };
+GLfloat sun_mat_specular[] = { 0, 0, 0, 1 };
+GLfloat sun_mat_emission[] = { 0.3, 0.1, 0.1, 0.0 };
+
+
+GLfloat sea_mat_amb[] = { 0.1, 0.1, 0.1, 1.0 };
+GLfloat sea_mat_diff[] = { 0.8, 0.8, 0.8, 1.0 };
+GLfloat sea_mat_specular[] = { 0.9, 0.9, 0.9, 1.0 };
+GLfloat sea_mat_shininess[] = { 50.0 };
+GLfloat seaLightpos[] = { 1,1,1,1 };
+
 
 void drawSpheres() {
 
     glPushMatrix();
 
-    glTranslated(0,0,-50);
+    glTranslated(0, 0, -50);
     glRotatef(Spin_star, 0.0, 1.0, 0.0);
 
     for (const auto& sphere : spheres) {
-        glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // Åõ¸íµµ Àû¿ë
+        glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // íˆ¬ëª…ë„ ì ìš©
+
+
+            // ì¬ì§ˆ ì„¤ì •
+        glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+        glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+        glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+        glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+
+
         glPushMatrix();
         glTranslatef(sphere.x, sphere.y, sphere.z);
         glutSolidSphere(0.1, 20, 20);
@@ -112,37 +166,36 @@ void drawSpheres() {
     }
 
     glPopMatrix();
-    glColor4f(1,1,1,1);
+    glColor4f(1, 1, 1, 1);
 
 }
 
 
-
 //
 //struct StarInfo {
-//    float x, y, z;  // ÇöÀç À§Ä¡
-//    float targetX, targetY, targetZ;  // ¸ñÇ¥ À§Ä¡
-//    float speed;  // ÀÌµ¿ ¼Óµµ
+//    float x, y, z;  // í˜„ì¬ ìœ„ì¹˜
+//    float targetX, targetY, targetZ;  // ëª©í‘œ ìœ„ì¹˜
+//    float speed;  // ì´ë™ ì†ë„
 //};
 //
 //std::vector<StarInfo> stars;
 //
 //void initStars(int numStars) {
-//    stars.clear();  // º¤ÅÍ ÃÊ±âÈ­
+//    stars.clear();  // ë²¡í„° ì´ˆê¸°í™”
 //
 //    for (int i = 0; i < numStars; ++i) {
 //        StarInfo star;
 //        star.x = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
 //        star.y = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        star.z = 40.0;  // °íÁ¤µÈ Z ÁÂÇ¥
+//        star.z = 40.0;  // ê³ ì •ëœ Z ì¢Œí‘œ
 //
 //        star.targetX = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
 //        star.targetY = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        star.targetZ = 30.0;  // °íÁ¤µÈ Z ÁÂÇ¥
+//        star.targetZ = 30.0;  // ê³ ì •ëœ Z ì¢Œí‘œ
 //
 //        star.speed = 0.1;
 //
-//        stars.push_back(star);  // º¤ÅÍ¿¡ Ãß°¡
+//        stars.push_back(star);  // ë²¡í„°ì— ì¶”ê°€
 //    }
 //}
 //
@@ -150,19 +203,19 @@ void drawSpheres() {
 //
 //void moveStars() {
 //    for (auto& star : stars) {
-//        // ÇöÀç À§Ä¡¿¡¼­ ¸ñÇ¥ À§Ä¡·Î ÀÌµ¿
+//        // í˜„ì¬ ìœ„ì¹˜ì—ì„œ ëª©í‘œ ìœ„ì¹˜ë¡œ ì´ë™
 //        float dx = star.targetX - star.x;
 //        float dy = star.targetY - star.y;
 //        float dz = star.targetZ - star.z;
 //        float distance = sqrt(dx * dx + dy * dy + dz * dz);
 //
-//        if (distance > 0.1) {  // ÀÌµ¿ÀÌ ´ú µÈ °æ¿ì¿¡¸¸ ÀÌµ¿
+//        if (distance > 0.1) {  // ì´ë™ì´ ëœ ëœ ê²½ìš°ì—ë§Œ ì´ë™
 //            float factor = star.speed / distance;
 //            star.x += dx * factor;
 //            star.y += dy * factor;
 //            star.z += dz * factor;
 //        }
-//        else {  // ¸ñÇ¥ À§Ä¡¿¡ µµ´ŞÇÏ¸é »õ·Î¿î ¸ñÇ¥ À§Ä¡ ¼³Á¤
+//        else {  // ëª©í‘œ ìœ„ì¹˜ì— ë„ë‹¬í•˜ë©´ ìƒˆë¡œìš´ ëª©í‘œ ìœ„ì¹˜ ì„¤ì •
 //            star.targetX = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
 //            star.targetY = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
 //        }
@@ -173,23 +226,23 @@ void drawSpheres() {
 //    for (const auto& star : stars) {
 //        glPushMatrix();
 //        glTranslatef(star.x, star.y, star.z);
-//        glColor3f(1.0, 1.0, 1.0);  // Èò»ö
+//        glColor3f(1.0, 1.0, 1.0);  // í°ìƒ‰
 //        glutSolidSphere(0.5, 10, 10);
 //        glPopMatrix();
 //    }
 //}
 
 struct FallingStar {
-    float x, y, z;  // ÇöÀç À§Ä¡
-    float speedX, speedY, speedZ;  // ÀÌµ¿ ¼Óµµ
-    float size;     // Å©±â
-    bool active;    // È°¼º ¿©ºÎ
+    float x, y, z;  // í˜„ì¬ ìœ„ì¹˜
+    float speedX, speedY, speedZ;  // ì´ë™ ì†ë„
+    float size;     // í¬ê¸°
+    bool active;    // í™œì„± ì—¬ë¶€
 };
 
 std::vector<FallingStar> fallingStars;
 
 void initFallingStars(int numStars) {
-    fallingStars.clear();  // º¤ÅÍ ÃÊ±âÈ­
+    fallingStars.clear();  // ë²¡í„° ì´ˆê¸°í™”
 
     for (int i = 0; i < numStars; ++i) {
         FallingStar star;
@@ -197,13 +250,13 @@ void initFallingStars(int numStars) {
         star.y = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
         star.z = 20.0;
 
-        star.speedX = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // X ¹æÇâ ¼Óµµ: 0¿¡¼­ 5.0 »çÀÌ
-        star.speedY = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // Y ¹æÇâ ¼Óµµ: 0¿¡¼­ 5.0 »çÀÌ
-        star.speedZ = static_cast<float>(rand()) / RAND_MAX * 2.0*0.1;  // Z ¹æÇâ ¼Óµµ: 0¿¡¼­ 2.0 »çÀÌ
-        star.size = 0.1;
+        star.speedX = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // X ë°©í–¥ ì†ë„: 0ì—ì„œ 5.0 ì‚¬ì´
+        star.speedY = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // Y ë°©í–¥ ì†ë„: 0ì—ì„œ 5.0 ì‚¬ì´
+        star.speedZ = static_cast<float>(rand()) / RAND_MAX * 2.0*0.1;  // Z ë°©í–¥ ì†ë„: 0ì—ì„œ 2.0 ì‚¬ì´
+        star.size = 5;
         star.active = false;
 
-        fallingStars.push_back(star);  // º¤ÅÍ¿¡ Ãß°¡
+        fallingStars.push_back(star);  // ë²¡í„°ì— ì¶”ê°€
     }
 }
 
@@ -213,16 +266,16 @@ void moveFallingStars() {
             star.x += star.speedX;
             star.y += star.speedY;
             star.z -= star.speedZ;
-            star.size -= 0.02;  // Å©±â¸¦ °¨¼Ò½ÃÄÑ »ç¶óÁö´Â È¿°ú
+            star.size -= 0.02;  // í¬ê¸°ë¥¼ ê°ì†Œì‹œì¼œ ì‚¬ë¼ì§€ëŠ” íš¨ê³¼
 
-            // Å©±â°¡ 0º¸´Ù ÀÛ¾ÆÁö¸é ºñÈ°¼ºÈ­
+            // í¬ê¸°ê°€ 0ë³´ë‹¤ ì‘ì•„ì§€ë©´ ë¹„í™œì„±í™”
             if (star.size < 0.0) {
                 star.active = false;
-                star.size = 0.0;  // Å©±â°¡ À½¼ö°¡ µÇÁö ¾Êµµ·Ï º¸Á¤
+                star.size = 0.0;  // í¬ê¸°ê°€ ìŒìˆ˜ê°€ ë˜ì§€ ì•Šë„ë¡ ë³´ì •
             }
         }
         else {
-            // ÀÏÁ¤ °£°İÀ¸·Î ¶³¾îÁö´Â º°¶Ëº°ÀÌ ³ªÅ¸³ªµµ·Ï ¼³Á¤
+            // ì¼ì • ê°„ê²©ìœ¼ë¡œ ë–¨ì–´ì§€ëŠ” ë³„ë˜¥ë³„ì´ ë‚˜íƒ€ë‚˜ë„ë¡ ì„¤ì •
             if (rand() % 100 == 0) {
                 star.active = true;
                 star.x = 20.0;
@@ -239,7 +292,7 @@ void drawFallingStars() {
         if (star.active) {
             glPushMatrix();
             glTranslatef(star.x, star.y, star.z);
-            glColor3f(1.0, 1.0, 1.0);  // Èò»ö
+            glColor3f(1.0, 1.0, 1.0);  // í°ìƒ‰
             glutSolidSphere(star.size, 10, 10);
             glPopMatrix();
         }
@@ -252,19 +305,11 @@ void drawFallingStars() {
 void MyDisplay() {
 
 
+    moveFallingStars();
+    drawFallingStars();
 
 
 
-    //ÀçÁú ¼³Á¤
-    GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
-    GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
-    GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
-    GLfloat mat_diffuse[] = { 0.1, 0.5, 0.8, 1.0 };
-    GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat no_shininess[] = { 0.0 };
-    GLfloat low_shininess[] = { 5.0 };
-    GLfloat high_shininess[] = { 100.0 };
-    GLfloat mat_emission[] = { 0.3, 0.2, 0.2, 0.0 };
 
     //Rotate camera
     float x_move = -30.f * (currentMouse[0] - preMouse[0]) / windowWidth;
@@ -282,9 +327,13 @@ void MyDisplay() {
 
 
 
+
+
     //set projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
+
+
 
 
 
@@ -296,10 +345,11 @@ void MyDisplay() {
 
 
 
+
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
 
-    GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
+    //GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
     ///
     //put your code here
     glDisable(GL_LIGHTING);
@@ -309,21 +359,59 @@ void MyDisplay() {
 
     skybox.MakeSky(20);
 
+    glEnable(GL_LIGHTING);
+
+
+    // ì•½ê°„ í•¸ë“œí°ìœ¼ë¡œ ë³´ëŠ”ê²ƒ ì²˜ëŸ¼ ë¨
+    //glPushMatrix();
+
+    //glLoadIdentity();
+    //glTranslated(0, 3, -3);
+    //glutSolidSphere(2, 10, 10);
+
+    //glPopMatrix();
+
+
+    // Light í…ŒìŠ¤íŠ¸
+    //glPushMatrix();
+
+    //GLfloat sub_ligth_pos[] = {0.0, 0.0 ,0.0 ,1};
+    //
+    //glTranslated(0, 4, 0.5);
+
+    ////glColor3f(1, 0, 0);
+    //glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    //glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+    //glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+
+    //glutSolidSphere(0.1, 10, 10);
+
+    //glRotated(SpinAngle, 0, 0, 1);
+
+    //glTranslated(0, 20, 0);
+
+    //glutSolidSphere(0.1, 10, 10);
+
+    //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
+    //glEnable(GL_LIGHT1);
+    //glPopMatrix();
+
+
+
+
 
     drawSpheres();
 
 
-    moveFallingStars();
-    drawFallingStars();
 
     //moveStars();
     //drawStars();
 
     //night_sphere.Make_night_sky(1);
-    /// skybox¶û night_spehre¸¦ ±×¸®¸é ÅØ½ºÃÄ°¡ ÇÏ³ª¾¿ ¹Ğ¸². ¹¹°¡ ¹®Á¦ÀÎ°ÅÁö?
-    glEnable(GL_LIGHTING); 
+    /// skyboxë‘ night_spehreë¥¼ ê·¸ë¦¬ë©´ í…ìŠ¤ì³ê°€ í•˜ë‚˜ì”© ë°€ë¦¼. ë­ê°€ ë¬¸ì œì¸ê±°ì§€?
 
-    GLfloat testlightPosition[] = { 0.f, 0.f, 5.f, 1.f};
     //glLightfv(GL_LIGHT0, GL_POSITION , testlightPosition);
 
     
@@ -397,7 +485,7 @@ void MyKeyboard(unsigned char key, int x, int y) {
 int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(800, 800);
+    glutInitWindowSize(1300, 1300);
     glutInitWindowPosition(200, 200);
     glutCreateWindow("openGL Sample Drawing");
 
@@ -414,13 +502,13 @@ int main(int argc, char** argv) {
     skybox.init();
     loadTex.init();
 
-    // ±¸Ã¼ ÃÊ±âÈ­
-    initSpheres(sphere_num);  // 10°³ÀÇ ±¸Ã¼¸¦ ÃÊ±âÈ­ÇÕ´Ï´Ù.
-    initFallingStars(10);
+    // êµ¬ì²´ ì´ˆê¸°í™”
+    initSpheres(sphere_num);  // 10ê°œì˜ êµ¬ì²´ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
+    initFallingStars(100);
     //night_sphere.init();
     
 
-    InitLight();
+    initLight();
     glutDisplayFunc(MyDisplay);
     glutReshapeFunc(MyReshape);
     glutMouseFunc(MyMouseClick);
