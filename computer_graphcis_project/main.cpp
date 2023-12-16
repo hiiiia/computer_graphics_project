@@ -31,6 +31,8 @@ int windowHeight, windowWidth;
 
 static int SpinAngle = 0;
 
+static float Spin_sun_moon = 0;
+
 static float Spin_star = 0;
 LoadTex loadTex;
 Sea sea;
@@ -72,6 +74,16 @@ void initLight() {
     glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
 
     glDisable(GL_LIGHT1);
+
+
+    glEnable(GL_LIGHT2);
+
+
+    glLightfv(GL_LIGHT2, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, light_specular);
+
+    glDisable(GL_LIGHT2);
 
     // 재질 설정 활성화
     //GL_COLOR_MATERIAL을 활성화하면 glColor 명령어로 설정한 색상이 물체의 재질에 적용
@@ -300,7 +312,63 @@ void drawFallingStars() {
 }
 
 
+void draw_sun_moon() {
+    glPushMatrix();
 
+    GLfloat sub_ligth_pos[] = { 60, 0.0 ,-20.0 ,1 };
+    GLfloat moon_ligth_pos[] = { -60, 0.0 ,-20.0 ,1 };
+
+    glTranslated(0, 0, -22);
+
+    //glColor3f(1, 0, 0);
+
+
+    //glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    //glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    //glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    //glMaterialfv(GL_FRONT, GL_SHININESS, low_shininess);
+    //glMaterialfv(GL_FRONT, GL_EMISSION, mat_emission);
+
+    //glutSolidSphere(1, 10, 10);
+
+    glRotatef(Spin_sun_moon,0, 1, 0);
+    //glRotated(90, 0, 0, 1);
+
+        glPushMatrix();
+        glTranslated(60, 0, 0);
+
+        glutSolidSphere(2, 100, 100);
+
+        glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
+        glEnable(GL_LIGHT1);
+
+
+        glPopMatrix();
+
+
+
+
+        glPushMatrix();
+
+        glTranslated(-60, 0, 0);
+
+        glutSolidSphere(2, 100, 100);
+
+
+        glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
+        glEnable(GL_LIGHT2);
+
+        //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
+        //glEnable(GL_LIGHT1);
+
+        glPopMatrix();
+
+
+    glPopMatrix();
+
+    glColor3f(1, 1, 1);
+
+};
 
 void MyDisplay() {
 
@@ -399,7 +467,7 @@ void MyDisplay() {
     //glPopMatrix();
 
 
-
+    draw_sun_moon();
 
 
     drawSpheres();
@@ -436,6 +504,7 @@ void MyReshape(int w, int h) {
 void MyTimer(int Value) {
     SpinAngle = (SpinAngle + 3) % 360;
     Spin_star = (Spin_star + 0.05) ;
+    Spin_sun_moon = (Spin_sun_moon + 0.01);
     glutPostRedisplay();
     glutTimerFunc(10, MyTimer, 1);
 }
