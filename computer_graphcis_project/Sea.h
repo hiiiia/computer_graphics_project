@@ -13,6 +13,7 @@
 #include <gl/glut.h>
 #include "LoadObj.h"
 #include "LoadTex.h"
+#include "Weather.h"
 #include <random>
 
 #define PI 3.1415926
@@ -282,36 +283,34 @@ public:
 };
 int OakCask::Total_OakCask_Count = 0;
 
+
+
 class Sea {
 public:
 	//LoadTexture _loadTexture;
 	float vertices[SeaSize][SeaSize][SeaSize];
 	vector <OakCask> Oaks;
 	Raft raft;
+	Weather weather;
 
-	void init() {
-		
-
-		OakCask oak1(4, -6, 0, 1);
-		OakCask oak2(5, -3.5, 0, 2);
-		OakCask oak3(4, -1.5, 0, 1.2);
-		OakCask oak4(5, 1.5, 0, 1.7);
-		OakCask oak5(4, 3.5, 0, 1.5);
-		OakCask oak6(5, 6, 0, 2.2);
-		OakCask oak7(4, 2.5, 0, 2.4);
-		OakCask oak8(5, -2.5, 0, 2.7);
-
-		Oaks.push_back(oak1);
-		Oaks.push_back(oak2);
-		Oaks.push_back(oak3);
-		Oaks.push_back(oak4);
-		Oaks.push_back(oak5);
-		Oaks.push_back(oak6);
-		Oaks.push_back(oak7);
-		Oaks.push_back(oak8);
-		
-	}
 	
+	void initFog() {
+		GLfloat fogColor[] = { 0.5f, 0.5f, 0.5f, 1.0f };
+
+		glFogi(GL_FOG_MODE, GL_LINEAR); // <1>
+		glFogfv(GL_FOG_COLOR, fogColor); // <2>
+		glFogf(GL_FOG_DENSITY, 0.3f); // <3>
+		glHint(GL_FOG_HINT, GL_NICEST); // <4>
+		glFogf(GL_FOG_START, 5.5f); // <5>
+		glFogf(GL_FOG_END, 12.5f); // <6>
+		glEnable(GL_FOG); // <7>
+	}
+
+	void initAlpha() {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_ALPHA_TEST);
+		glAlphaFunc(GL_GREATER, 0);
+	}
 
 	void DrawSea(float time, float height = 1.0f , float waveSpeedH = 30.0f , float waveSpeedV = 30.0f) {
 
@@ -425,7 +424,9 @@ public:
 		}
 	}
 	
-	void Update(float time) {
+	void Update(float time, vec3 eye , vec3 at) {
+
+		
 
 		DrawSea(time, 1, 20, 25);
 		raft.DrawObj();
@@ -433,5 +434,33 @@ public:
 		for (int i = 0; i < 8; i++) {
 			Oaks[i].Move(time);
 		}
+
+		weather.Update(eye, at);
 	}
+
+	void init() {
+
+
+		OakCask oak1(4, -6, 0, 1);
+		OakCask oak2(5, -3.5, 0, 2);
+		OakCask oak3(4, -1.5, 0, 1.2);
+		OakCask oak4(5, 1.5, 0, 1.7);
+		OakCask oak5(4, 3.5, 0, 1.5);
+		OakCask oak6(5, 6, 0, 2.2);
+		OakCask oak7(4, 2.5, 0, 2.4);
+		OakCask oak8(5, -2.5, 0, 2.7);
+
+		Oaks.push_back(oak1);
+		Oaks.push_back(oak2);
+		Oaks.push_back(oak3);
+		Oaks.push_back(oak4);
+		Oaks.push_back(oak5);
+		Oaks.push_back(oak6);
+		Oaks.push_back(oak7);
+		Oaks.push_back(oak8);
+		//initFog();
+		weather.init();
+		initAlpha();
+	}
+
 };

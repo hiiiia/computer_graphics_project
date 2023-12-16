@@ -32,6 +32,7 @@ vec3 tmp_loc;
 static int skybox_size = 20;
 
 static int SpinAngle = 0;
+static int weatherTime = 0;
 
 static float Spin_sun_moon = 0;
 
@@ -514,6 +515,12 @@ void MyDisplay() {
 
 
 
+    GLfloat sea_mat_amb[] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat sea_mat_diff[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat sea_mat_specular[] = { 0.9, 0.9, 0.9, 1.0 };
+    GLfloat sea_mat_shininess[] = { 50.0 };
+    GLfloat seaLightpos[] = { 1,1,1,1 };
+
     //Rotate camera
     float x_move = -30.f * (currentMouse[0] - preMouse[0]) / windowWidth;
     float y_move = -30.f * (currentMouse[1] - preMouse[1]) / windowHeight;
@@ -523,7 +530,7 @@ void MyDisplay() {
     preMouse = currentMouse;
 
     //get camera variables from camera class
-    
+
     vec3 eye = myCamera.eye;
     vec3 at = myCamera.at;
     vec3 up = myCamera.up;
@@ -550,6 +557,12 @@ void MyDisplay() {
 
 
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
+
+
+    //GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    ///
+    //put your code here
 
 
     glDisable(GL_LIGHTING);
@@ -592,12 +605,15 @@ void MyDisplay() {
 
     //glLightfv(GL_LIGHT0, GL_POSITION , testlightPosition);
 
-    
-    sea.Update(SpinAngle);
+    glPopMatrix();
+
+    sea.Update(SpinAngle, myCamera.eye, myCamera.at);
 
 
     //oak2.DrawObj(1.f, -1.f, 0.f);
     //oak3.DrawObj(-1.f, -1.f, 0.f);
+
+
 
     glutSwapBuffers();
 
@@ -619,6 +635,20 @@ void MyTimer(int Value) {
     glutTimerFunc(10, MyTimer, 1);
 }
 
+void MyTimer2(int Value) {
+    weatherTime += 1;
+
+    if (weatherTime >= 10) {
+        weatherTime = 0;
+        cout << " �뼮�� ���� ���� : �ı� �ϵ� " << endl;
+        Weather::ChangeWeather();
+    }
+
+    cout << weatherTime << endl;
+    glutPostRedisplay();
+    glutTimerFunc(1000, MyTimer2, 1);
+}
+
 void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
     if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN) {
         preMouse = vec2(X, Y);
@@ -633,6 +663,7 @@ void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
 
 void MyMouseMove(GLint X, GLint Y)
 {
+    
     currentMouse = vec2(X, Y);
     glutPostRedisplay();
 }
@@ -681,7 +712,8 @@ int main(int argc, char** argv) {
     myCamera.InitCamera(eye, at, up);
 
     srand((unsigned int)time(NULL));
-    
+
+    loadTex.init();
     sea.init();
     skybox.init();
     loadTex.init();
@@ -699,6 +731,7 @@ int main(int argc, char** argv) {
     glutMotionFunc(MyMouseMove);
     glutKeyboardFunc(MyKeyboard);
     glutTimerFunc(40, MyTimer, 1);
+    glutTimerFunc(1000, MyTimer2, 1);
     glutMainLoop();
     return 0;
 }

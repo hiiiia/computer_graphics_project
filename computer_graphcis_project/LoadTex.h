@@ -19,7 +19,7 @@
 
 
 #define PI 3.1415926
-#define TEXTURE_NUM 20
+#define TEXTURE_NUM 30
 
 
 using namespace glm;
@@ -75,18 +75,28 @@ public:
 		LoadGLTextures("Images/wood3.jpg", 8);
 		LoadGLTextures("Images/raft.png", 9);
 
-		LoadGLTextures("Data/skybox2/front.bmp", 10);
-		LoadGLTextures("Data/skybox2/back.bmp", 11);
-		LoadGLTextures("Data/skybox2/top.bmp", 12);
-		LoadGLTextures("Data/skybox2/bottom.bmp", 13);
-		LoadGLTextures("Data/skybox2/right.bmp", 14);
-		LoadGLTextures("Data/skybox2/left.bmp", 15);
 
 
-		LoadGLTextures("Data/Planets/Sun.bmp", 16);
-		LoadGLTextures("Data/Planets/Moon.bmp", 17);
+
+		LoadGLTextures("Data/Sakura1.bmp", 10);
+		LoadGLTextures("Data/Sakura2.bmp", 11);
+		LoadGLTextures("Data/SnowSmall.bmp", 12);
+		LoadGLTextures("Data/SnowMiddle.bmp", 13);
+		LoadGLTextures("Data/SnowLarge.bmp", 14);
+		LoadGLTextures("Data/FallenLeaf.bmp", 15);
+		LoadGLTextures("Data/FallenLeaf2.bmp", 16);
+		
+
+		LoadGLTextures("Data/skybox2/front.bmp", 17);
+		LoadGLTextures("Data/skybox2/back.bmp", 18);
+		LoadGLTextures("Data/skybox2/top.bmp", 19);
+		LoadGLTextures("Data/skybox2/bottom.bmp", 20);
+		LoadGLTextures("Data/skybox2/right.bmp", 21);
+		LoadGLTextures("Data/skybox2/left.bmp", 22);
 
 
+		LoadGLTextures("Data/Planets/Sun.bmp", 23);
+		LoadGLTextures("Data/Planets/Moon.bmp", 24);
 	}
 
 };
