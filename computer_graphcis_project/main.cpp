@@ -55,7 +55,7 @@ float g_fSpinY = 0.0f;
 float g_fDistance = -50.5f;
 float g_fCameraX = 0.0f;
 float g_fCameraY = 0.0f;
-float g_fCameraSpeed = 1.0f;
+float g_fCameraSpeed = 0.1f;
 
 
 
@@ -736,8 +736,9 @@ void MyDisplay() {
         glRotated(180, 0, 1, 0);
         glRotated(-90, 1, 0, 0);
 
-
+        glTranslatef(moving.x, moving.z, moving.y);
         glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //이거를 하면 오브젝트만 회전
+
        // printf_s("%f /%f\n", g_fSpinX, g_fSpinY);
         printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
@@ -894,30 +895,23 @@ void MyKeyboard(unsigned char key, int x, int y) {
     case 'w':
         myCamera.MoveCamera(myCamera.forward * scale);
 
-        translate_obj += forward * g_fCameraSpeed;
-        at_ -= forward;
 
         break;
     case 's':
         myCamera.MoveCamera(myCamera.forward * -scale);
 
-        translate_obj -= forward * g_fCameraSpeed;
-        at_ += forward;
+
 
 
         break;
     case 'a':
         myCamera.MoveCamera(myCamera.right * -scale);
 
-        translate_obj -= right * g_fCameraSpeed;
-        at_ += right;
 
         break;
     case 'd':
         myCamera.MoveCamera(myCamera.right * scale);
 
-        translate_obj += right * g_fCameraSpeed;
-        at_ -= right;
 
         break;
     case 'q':
@@ -925,6 +919,26 @@ void MyKeyboard(unsigned char key, int x, int y) {
         break;
     case 'z':
         myCamera.MoveCamera(myCamera.up * -scale);
+        break;
+
+    case '8':
+
+        translate_obj += forward * g_fCameraSpeed;
+        at_ -= forward;
+        break;
+    case '5':
+        translate_obj -= forward * g_fCameraSpeed;
+        at_ += forward;
+        break;
+    case '4':
+
+        translate_obj += right * g_fCameraSpeed;
+        at_ += right;
+        break;
+    case '6':
+
+        translate_obj -= right * g_fCameraSpeed;
+        at_ -= right;
         break;
 
     default:
