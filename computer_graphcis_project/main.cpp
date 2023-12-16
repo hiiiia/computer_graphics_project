@@ -195,9 +195,10 @@ int main(int argc, char** argv) {
 
     srand((unsigned int)time(NULL));
     
-    sea.init();
-    skybox.init();
     loadTex.init();
+    skybox.init();
+    sea.init();
+    
     //night_sphere.init();
 
     

@@ -74,6 +74,7 @@ public:
 		LoadGLTextures("Images/wood2.bmp", 7);
 		LoadGLTextures("Images/wood3.jpg", 8);
 		LoadGLTextures("Images/raft.png", 9);
+		//LoadGLTextures("Data/Sky.bmp", 10);
 	}
 
 };
