@@ -55,7 +55,7 @@ float g_fSpinY = 0.0f;
 float g_fDistance = -50.5f;
 float g_fCameraX = 0.0f;
 float g_fCameraY = 0.0f;
-float g_fCameraSpeed = 0.2f;
+float g_fCameraSpeed = 0.1f;
 
 
 
@@ -640,21 +640,14 @@ void MyDisplay() {
         glRotated(180, 0, 1, 0);
         glRotated(-90, 1, 0, 0);
 
-        glTranslatef(moving.x, moving.z, moving.y);/////////////////////////////////////////////////////
-        glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //이거를 하면 오브젝트만 회전
+        glTranslatef(moving.x, moving.z, moving.y);
+        glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); 
 
-       // printf_s("%f /%f\n", g_fSpinX, g_fSpinY);
-        //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
+        printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
         DrawWireSurface(vertices, faces);
         glutSolidSphere(0.5, 100, 100);
 
-
-
-    //printf_s("%.2f / %.2f / %.2f\n", myCamera.eye.x, myCamera.eye.y, myCamera.eye.z);
-
-
-    //printf_s("%.2f / %.2f / %.2f\n", myCamera.at.x, myCamera.at.y, myCamera.at.z);
 
     glPopMatrix();
 
@@ -827,6 +820,7 @@ void MyMouseMove(GLint X, GLint Y)
     glutPostRedisplay();
 }
 
+
 void MyKeyboard(unsigned char key, int x, int y) {
     float scale = 0.1;
 
@@ -884,13 +878,11 @@ void MyKeyboard(unsigned char key, int x, int y) {
         break;
     }
 
-////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////////////
     glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(g_fSpinX), glm::vec3(0.0f, 0.0f, 1.0f));
     translate_obj = glm::vec3(rotationMatrix * glm::vec4(translate_obj, 0.0f));
     moving += translate_obj;
     /// //////////////////////////////////////////////////////////////////////////////
-
-
 
 
     glutPostRedisplay();
