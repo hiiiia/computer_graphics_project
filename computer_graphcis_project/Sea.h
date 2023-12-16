@@ -13,6 +13,7 @@
 #include <gl/glut.h>
 #include "LoadObj.h"
 #include "LoadTex.h"
+#include "Weather.h"
 #include <random>
 
 #define PI 3.1415926
@@ -282,37 +283,7 @@ public:
 };
 int OakCask::Total_OakCask_Count = 0;
 
-class Weather {
-public:
 
-	void Update() {
-		/*glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glEnable(GL_ALPHA_TEST);
-		glAlphaFunc(GL_GREATER, 0);*/
-		/*glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
-
-		glBegin(GL_QUADS);
-		
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex3f(1, 1, 1);
-
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex3f(2, 1, 1);
-
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex3f(1, 2, 1);
-
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex3f(2, 2, 1);
-
-
-		glEnd;*/
-	}
-
-	void init() {
-
-	}
-};
 
 class Sea {
 public:
@@ -453,7 +424,7 @@ public:
 		}
 	}
 	
-	void Update(float time) {
+	void Update(float time, vec3 eye , vec3 at) {
 
 		
 
@@ -464,7 +435,7 @@ public:
 			Oaks[i].Move(time);
 		}
 
-		weather.Update();
+		weather.Update(eye, at);
 	}
 
 	void init() {
@@ -487,7 +458,8 @@ public:
 		Oaks.push_back(oak6);
 		Oaks.push_back(oak7);
 		Oaks.push_back(oak8);
-		initFog();
+		//initFog();
+		weather.init();
 		initAlpha();
 	}
 

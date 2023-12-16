@@ -20,6 +20,7 @@ public:
     float distance = 1; //distance from eye to at
     vec3 right; //vector indicating right direction from the point of camera
 
+
     void InitCamera(vec3 _center, vec3 _at, vec3 _up)
     {
         //set three variables and update others

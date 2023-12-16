@@ -18,6 +18,7 @@
     <ClInclude Include="night_sphere.h" />
     <ClInclude Include="LoadObj.h" />
     <ClInclude Include="LoadTex.h" />
+    <ClInclude Include="Weather.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -74,7 +74,14 @@ public:
 		LoadGLTextures("Images/wood2.bmp", 7);
 		LoadGLTextures("Images/wood3.jpg", 8);
 		LoadGLTextures("Images/raft.png", 9);
-		//LoadGLTextures("Data/Sky.bmp", 10);
+		LoadGLTextures("Data/Sakura1.bmp", 10);
+		LoadGLTextures("Data/Sakura2.bmp", 11);
+		LoadGLTextures("Data/SnowSmall.bmp", 12);
+		LoadGLTextures("Data/SnowMiddle.bmp", 13);
+		LoadGLTextures("Data/SnowLarge.bmp", 14);
+		LoadGLTextures("Data/FallenLeaf.bmp", 15);
+		LoadGLTextures("Data/FallenLeaf2.bmp", 16);
+		
 	}
 
 };

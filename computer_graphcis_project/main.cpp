@@ -26,6 +26,7 @@ vec2 preMouse, currentMouse;
 int windowHeight, windowWidth;
 
 static int SpinAngle = 0;
+static int weatherTime = 0;
 
 LoadTex loadTex;
 Sea sea;
@@ -36,6 +37,7 @@ Sea sea;
 Skybox skybox;
 Night_sphere night_sphere;
 
+
 void InitLight() {
     GLfloat light0_ambient[] = { 0.5, 0.5, 0.5, 1.0 };     //조명 특성
     GLfloat light0_diffuse[] = { 0.5, 0.5, 0.5, 1.0 };
@@ -44,12 +46,20 @@ void InitLight() {
 
     glShadeModel(GL_SMOOTH); //구로 셰이딩
     glEnable(GL_DEPTH_TEST); //깊이 버퍼 활성화
+    glDepthFunc(GL_LEQUAL);
     glEnable(GL_LIGHTING); //조명 활성화
     glEnable(GL_LIGHT0);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light0_ambient); //주변광 설정
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light0_diffuse); //확산광 설정
     glLightfv(GL_LIGHT0, GL_SPECULAR, light0_specular);
     glLightfv(GL_LIGHT0, GL_POSITION, light0_position);
+
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light0_ambient); //주변광 설정
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light0_diffuse); //확산광 설정
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light0_specular);
+    //glLightfv(GL_LIGHT1, GL_POSITION, light0_position);
+
     /// <summary>
     /// 
     /// </summary>
@@ -57,18 +67,23 @@ void InitLight() {
 
 void MyDisplay() {
 
-    
 
     //재질 설정
     GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
     GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
-    GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
+    GLfloat mat_ambient_color[] = { 0.2, 0.2, 0.2, 1.0 };
     GLfloat mat_diffuse[] = { 0.1, 0.5, 0.8, 1.0 };
     GLfloat mat_specular[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat no_shininess[] = { 0.0 };
     GLfloat low_shininess[] = { 5.0 };
-    GLfloat high_shininess[] = { 100.0 };
+    GLfloat high_shininess[] = { 50.0 };
     GLfloat mat_emission[] = { 0.3, 0.2, 0.2, 0.0 };
+
+    GLfloat sea_mat_amb[] = { 0.1, 0.1, 0.1, 1.0 };
+    GLfloat sea_mat_diff[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat sea_mat_specular[] = { 0.9, 0.9, 0.9, 1.0 };
+    GLfloat sea_mat_shininess[] = { 50.0 };
+    GLfloat seaLightpos[] = { 1,1,1,1 };
 
     //Rotate camera
     float x_move = -30.f * (currentMouse[0] - preMouse[0]) / windowWidth;
@@ -79,12 +94,11 @@ void MyDisplay() {
     preMouse = currentMouse;
 
     //get camera variables from camera class
-    
+
     vec3 eye = myCamera.eye;
     vec3 at = myCamera.at;
     vec3 up = myCamera.up;
 
-   
 
     //set projection
     glMatrixMode(GL_PROJECTION);
@@ -103,22 +117,25 @@ void MyDisplay() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     ///
     //put your code here
+
+
     glDisable(GL_LIGHTING);
 
 
     skybox.MakeSky(10);
     //night_sphere.Make_night_sky(1);
     /// skybox랑 night_spehre를 그리면 텍스쳐가 하나씩 밀림. 뭐가 문제인거지?
-    glEnable(GL_LIGHTING); 
+    glEnable(GL_LIGHTING);
 
-    GLfloat testlightPosition[] = { 0.f, 0.f, 5.f, 1.f};
-    //glLightfv(GL_LIGHT0, GL_POSITION , testlightPosition);
 
-    
-    sea.Update(SpinAngle);
+    glPopMatrix();
+
+    sea.Update(SpinAngle, myCamera.eye, myCamera.at);
 
     //oak2.DrawObj(1.f, -1.f, 0.f);
     //oak3.DrawObj(-1.f, -1.f, 0.f);
+
+
 
     glutSwapBuffers();
 
@@ -137,6 +154,20 @@ void MyTimer(int Value) {
     glutTimerFunc(40, MyTimer, 1);
 }
 
+void MyTimer2(int Value) {
+    weatherTime += 1;
+
+    if (weatherTime >= 10) {
+        weatherTime = 0;
+        cout << " 용석박 통합 기원 : 컴그 일동 " << endl;
+        Weather::ChangeWeather();
+    }
+
+    cout << weatherTime << endl;
+    glutPostRedisplay();
+    glutTimerFunc(1000, MyTimer2, 1);
+}
+
 void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
     if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN) {
         preMouse = vec2(X, Y);
@@ -146,6 +177,7 @@ void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
 
 void MyMouseMove(GLint X, GLint Y)
 {
+    
     currentMouse = vec2(X, Y);
     glutPostRedisplay();
 }
@@ -194,14 +226,14 @@ int main(int argc, char** argv) {
     myCamera.InitCamera(eye, at, up);
 
     srand((unsigned int)time(NULL));
-    
+
     loadTex.init();
-    skybox.init();
     sea.init();
-    
+    skybox.init();
+
     //night_sphere.init();
 
-    
+
 
     InitLight();
     glutDisplayFunc(MyDisplay);
@@ -210,6 +242,7 @@ int main(int argc, char** argv) {
     glutMotionFunc(MyMouseMove);
     glutKeyboardFunc(MyKeyboard);
     glutTimerFunc(40, MyTimer, 1);
+    glutTimerFunc(1000, MyTimer2, 1);
     glutMainLoop();
     return 0;
 }
