@@ -1,4 +1,7 @@
+ï»¿
 #define _CRT_SECURE_NO_WARNINGS
+
+
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -7,6 +10,9 @@
 
 #include <vector>
 #include <GLAUX/glaux.h>
+#include <stdio.h> 
+#include <iostream>
+
 
 #include <glm/glm.hpp> 
 #include <glm/gtc/matrix_transform.hpp> 
@@ -21,8 +27,7 @@
 #include "LoadTex.h"
 #include "night_sphere.h"
 
-int sphere_num =1500;
-camera myCamera;
+int sphere_num = 1500;
 
 vec2 preMouse, currentMouse;
 int windowHeight, windowWidth;
@@ -39,14 +44,58 @@ static float Spin_sun_moon = 0;
 static float Spin_star = 0;
 
 static bool Ray_flag = false;
+
+
+vec3 moving(0.0f, 0.0f, 0.0f);
+glm::vec3 cubeWorldPosition(0.0f);
+
+float g_fSpinX = 0.0f;
+float g_fSpinY = 0.0f;
+
+float g_fDistance = -50.5f;
+float g_fCameraX = 0.0f;
+float g_fCameraY = 0.0f;
+float g_fCameraSpeed = 1.0f;
+
+
+
+vec3 at_(0, 0, 0);
+
+
+bool moveCamera = false;
+
+static POINT ptLastMousePosit;
+static POINT ptCurrentMousePosit;
+static bool bMousing;
+
+int Width, Height;
+bool viewport = false;
+
+
+std::vector < glm::vec3 > vertices;
+std::vector < glm::ivec3 > faces;
+std::vector < glm::vec2 > uvs;
+std::vector < glm::vec3 > normals;
+
+
+
 LoadTex loadTex;
 Sea sea;
+camera myCamera;
 
 
-
-//OakCask oak3;
 Skybox skybox;
 Night_sphere night_sphere;
+
+using namespace std;
+using namespace glm;
+
+
+
+
+
+
+
 
 void initLight() {
     glEnable(GL_LIGHTING);  // ì¡°ëª… í™œì„±í™”
@@ -55,7 +104,7 @@ void initLight() {
     glEnable(GL_LIGHT0);
 
     // ê´‘ì› ìœ„ì¹˜ ì„¤ì •
-    GLfloat light_position[] = {0.0, 0.0, 0.0, 1.0 };  // (x, y, z, w) - wëŠ” ê´‘ì›ì´ ë°©í–¥ ê´‘ì›ì¸ì§€ ìœ„ì¹˜ ê´‘ì›ì¸ì§€ë¥¼ ë‚˜íƒ€ëƒ„
+    GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };  // (x, y, z, w) - wëŠ” ê´‘ì›ì´ ë°©í–¥ ê´‘ì›ì¸ì§€ ìœ„ì¹˜ ê´‘ì›ì¸ì§€ë¥¼ ë‚˜íƒ€ëƒ„
 
     // ê´‘ì› ìƒ‰ìƒ ì„¤ì •
     GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
@@ -96,6 +145,15 @@ void initLight() {
 }
 
 
+void init(void) {
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glShadeModel(GL_SMOOTH);    //êµ¬ë¡œ ì…°ì´ë”©
+    glEnable(GL_DEPTH_TEST); // ê¹Šì´ë²„í¼
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_FRONT);
+}
+
+
 struct SphereInfo {
     float x, y, z;  // ìœ„ì¹˜
     float r, g, b, a;  // ìƒ‰ìƒ ë° íˆ¬ëª…ë„
@@ -128,115 +186,6 @@ void initSpheres(int numSpheres) {
         sphere.a = 1;
 
         spheres.push_back(sphere);  // ë²¡í„°ì— ì¶”ê°€
-
-using namespace std;
-using namespace glm;
-
-//static int Day = 0, Time = 0;
-
-int windowHeight, windowWidth;
-vec2 preMouse, currentMouse;
-vec3 moving(0.0f, 0.0f, 0.0f);
-glm::vec3 cubeWorldPosition(0.0f);
-
-float g_fSpinX = 0.0f;
-float g_fSpinY = 0.0f;
-
-float g_fDistance = -50.5f;
-float g_fCameraX = 0.0f;
-float g_fCameraY = 0.0f;
-float g_fCameraSpeed = 1.0f;
-
-bool moveCamera = false;
-
-static POINT ptLastMousePosit;
-static POINT ptCurrentMousePosit;
-static bool bMousing;
-
-int Width, Height;
-bool viewport = false;
-
-
-//obj ÆÄÀÏ ¹Ş¾Æ¿À±â 
-std::vector < glm::vec3 > vertices;
-std::vector < glm::ivec3 > faces;
-std::vector < glm::vec2 > uvs;
-std::vector < glm::vec3 > normals;
-
-
-//3D °ñ·½ obj load
-bool LoadObj(const char* path,
-    std::vector < glm::vec3 >& out_vertices,
-    std::vector < glm::ivec3 >& out_faces,
-    std::vector < glm::vec2 >& out_uvs,
-    std::vector < glm::vec3 >& out_normals)
-{
-    //init variables
-    out_vertices.clear();
-    out_faces.clear();
-    out_uvs.clear();
-    out_normals.clear();
-
-    FILE* file = fopen(path, "r");
-    if (file == NULL) {
-        printf("Impossible to open the file !\n");
-        return false;
-    }
-
-    while (1) {
-        char lineHeader[128];
-        // read the first word of the line
-        int res = fscanf(file, "%s", lineHeader);
-        if (res == -1)
-            break;
-
-        if (strcmp(lineHeader, "v") == 0) {
-            glm::vec3 vertex;
-            fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
-            out_vertices.push_back(vertex);
-        }
-        else if (strcmp(lineHeader, "vt") == 0) {
-            glm::vec2 uv;
-            fscanf(file, "%f %f %f\n", &uv.x, &uv.y);
-            out_uvs.push_back(uv);
-        }
-        else if (strcmp(lineHeader, "vn") == 0) {
-            glm::vec3 normal;
-            fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
-            out_normals.push_back(normal);
-        }
-        else if (strcmp(lineHeader, "f") == 0) {
-            std::string vertex1, vertex2, vertex3;
-            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            int matchs = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0],
-                &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
-            out_faces.push_back(glm::ivec3(vertexIndex[0] - 1, vertexIndex[1] - 1, vertexIndex[2] - 1));
-
-        }
-    }
-
-}
-
-
-void DrawWireSurface(std::vector < glm::vec3 >& vectices,
-    std::vector < glm::ivec3 >& faces)
-{
-    //movingÀ» ³Ö¾î¼­ °ñ·ë À§Ä¡ º¯°æ
-    for (int i = 0; i < faces.size(); i++) {
-
-        glColor3f(0.5, 0.6, 0.7);
-
-        glBegin(GL_LINES);
-
-        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
-        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
-
-        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
-        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
-
-        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
-        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
-        glEnd();
     }
 }
 
@@ -279,9 +228,9 @@ void drawSpheres() {
         glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // íˆ¬ëª…ë„ ì ìš©
 
 
-        //if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
-        //    printf_s("%d", count);
-        //}
+        if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
+            printf_s("%d", count);
+        }
 
         //glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
             // ì¬ì§ˆ ì„¤ì •
@@ -383,9 +332,9 @@ void initFallingStars(int numStars) {
         star.y = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
         star.z = 20.0;
 
-        star.speedX = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // X ë°©í–¥ ì†ë„: 0ì—ì„œ 5.0 ì‚¬ì´
-        star.speedY = static_cast<float>(rand()) / RAND_MAX * 5.0*0.1;  // Y ë°©í–¥ ì†ë„: 0ì—ì„œ 5.0 ì‚¬ì´
-        star.speedZ = static_cast<float>(rand()) / RAND_MAX * 2.0*0.1;  // Z ë°©í–¥ ì†ë„: 0ì—ì„œ 2.0 ì‚¬ì´
+        star.speedX = static_cast<float>(rand()) / RAND_MAX * 5.0 * 0.1;  // X ë°©í–¥ ì†ë„: 0ì—ì„œ 5.0 ì‚¬ì´
+        star.speedY = static_cast<float>(rand()) / RAND_MAX * 5.0 * 0.1;  // Y ë°©í–¥ ì†ë„: 0ì—ì„œ 5.0 ì‚¬ì´
+        star.speedZ = static_cast<float>(rand()) / RAND_MAX * 2.0 * 0.1;  // Z ë°©í–¥ ì†ë„: 0ì—ì„œ 2.0 ì‚¬ì´
         star.size = 5;
         star.active = false;
 
@@ -449,9 +398,9 @@ void draw_with_Texture2(float radius, int slices) {
 void draw_sun_moon() {
     glPushMatrix();
 
-    GLfloat sub_ligth_pos[] = { skybox_size*3, 0.0 ,-skybox_size ,1 };
-    GLfloat moon_ligth_pos[] = { -skybox_size*3, 0.0 ,-skybox_size ,1 };
-    GLfloat radius = skybox_size*3;
+    GLfloat sub_ligth_pos[] = { skybox_size * 3, 0.0 ,-skybox_size ,1 };
+    GLfloat moon_ligth_pos[] = { -skybox_size * 3, 0.0 ,-skybox_size ,1 };
+    GLfloat radius = skybox_size * 3;
     float planets_rad = 1;
     glTranslated(0, 0, -22);
 
@@ -463,47 +412,47 @@ void draw_sun_moon() {
 
     //glutSolidSphere(1, 10, 10);
 
-    glRotatef(Spin_sun_moon*10,0, 1, 0);
+    glRotatef(Spin_sun_moon * 10, 0, 1, 0);
     //glRotated(90, 0, 0, 1);
 
-        glPushMatrix();
+    glPushMatrix();
 
-        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[23]);
+    glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[23]);
 
-        glTranslated(radius, 0, 0);
+    glTranslated(radius, 0, 0);
 
-        draw_with_Texture2(planets_rad, 100);
+    draw_with_Texture2(planets_rad, 100);
 
-        glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
-        glEnable(GL_LIGHT1);
-
-
-        glPopMatrix();
+    glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
+    glEnable(GL_LIGHT1);
 
 
-
-
-        glPushMatrix();
-
-
-        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[24]);
-
-
-        glTranslated(-radius, 0, 0);
-
-        draw_with_Texture2(planets_rad, 100);
+    glPopMatrix();
 
 
 
-        glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
-        glEnable(GL_LIGHT2);
 
-        //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
-        //glEnable(GL_LIGHT1);
+    glPushMatrix();
 
 
+    glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[24]);
 
-        glPopMatrix();
+
+    glTranslated(-radius, 0, 0);
+
+    draw_with_Texture2(planets_rad, 100);
+
+
+
+    glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
+    glEnable(GL_LIGHT2);
+
+    //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
+    //glEnable(GL_LIGHT1);
+
+
+
+    glPopMatrix();
 
 
     glPopMatrix();
@@ -540,8 +489,8 @@ void drawRay() {
     vec3 direction = normalize(myCamera.eye - myCamera.at);
 
     // Skyboxì˜ ê²½ê³„ ìƒì (ì˜ˆ: -40, -40, -40ì—ì„œ 40, 40, 40)
-    vec3 boxMin(-skybox_size*4, -skybox_size*4, -skybox_size*4);
-    vec3 boxMax(skybox_size*4, skybox_size*4, skybox_size*4);
+    vec3 boxMin(-skybox_size * 4, -skybox_size * 4, -skybox_size * 4);
+    vec3 boxMax(skybox_size * 4, skybox_size * 4, skybox_size * 4);
 
 
 
@@ -560,27 +509,27 @@ void drawRay() {
             tmp_loc = eye + tMin * direction;
 
             glPushMatrix();
-                glColor3f(1.0, 1.0, 0.0);
-                glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
+            glColor3f(1.0, 1.0, 0.0);
+            glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
 
 
-                SphereInfo sphere;
+            SphereInfo sphere;
 
-                sphere.x = tmp_loc.x;
-                sphere.y = tmp_loc.y;
-                sphere.z = tmp_loc.z;
+            sphere.x = tmp_loc.x;
+            sphere.y = tmp_loc.y;
+            sphere.z = tmp_loc.z;
 
-                sphere.r = 1;
-                sphere.g = 1;
-                sphere.b = 1;
-                sphere.a = 1;
+            sphere.r = 1;
+            sphere.g = 1;
+            sphere.b = 1;
+            sphere.a = 1;
 
-                spheres.push_back(sphere);
-                //glutSolidCube(100);
-                //glColor3f(1.0, 1.0, 1.0);
+            spheres.push_back(sphere);
+            //glutSolidCube(100);
+            //glColor3f(1.0, 1.0, 1.0);
             glPopMatrix();
 
-            printf_s("Sphere size: %d \n",spheres.size());
+            printf_s("Sphere size: %d \n", spheres.size());
             printf_s("Eye: (%.2f, %.2f, %.2f)\n", eye.x, eye.y, eye.z);
             printf_s("At: (%.2f, %.2f, %.2f)\n", direction.x, direction.y, direction.z);
             printf_s("Ray: (%.2f, %.2f, %.2f)\n", tmp_loc.x, tmp_loc.y, tmp_loc.z);
@@ -615,6 +564,84 @@ void drawRay() {
 
 
 
+bool LoadObj(const char* path,
+    std::vector < glm::vec3 >& out_vertices,
+    std::vector < glm::ivec3 >& out_faces,
+    std::vector < glm::vec2 >& out_uvs,
+    std::vector < glm::vec3 >& out_normals)
+{
+    //init variables
+    out_vertices.clear();
+    out_faces.clear();
+    out_uvs.clear();
+    out_normals.clear();
+
+    FILE* file = fopen(path, "r");
+    if (file == NULL) {
+        printf("Impossible to open the file !\n");
+        return false;
+    }
+
+    while (1) {
+        char lineHeader[128];
+        // read the first word of the line
+        int res = fscanf(file, "%s", lineHeader);
+        if (res == -1)
+            break;
+
+        if (strcmp(lineHeader, "v") == 0) {
+            glm::vec3 vertex;
+            fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+            out_vertices.push_back(vertex);
+        }
+        else if (strcmp(lineHeader, "vt") == 0) {
+            glm::vec2 uv;
+            fscanf(file, "%f %f %f\n", &uv.x, &uv.y);
+            out_uvs.push_back(uv);
+        }
+        else if (strcmp(lineHeader, "vn") == 0) {
+            glm::vec3 normal;
+            fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+            out_normals.push_back(normal);
+        }
+        else if (strcmp(lineHeader, "f") == 0) {
+            std::string vertex1, vertex2, vertex3;
+            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+            int matchs = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0],
+                &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+            out_faces.push_back(glm::ivec3(vertexIndex[0] - 1, vertexIndex[1] - 1, vertexIndex[2] - 1));
+
+        }
+    }
+
+}
+
+
+
+
+void DrawWireSurface(std::vector < glm::vec3 >& vectices,
+    std::vector < glm::ivec3 >& faces)
+{
+    //movingì„ ë„£ì–´ì„œ ê³¨ë£¸ ìœ„ì¹˜ ë³€ê²½
+    for (int i = 0; i < faces.size(); i++) {
+
+        glColor3f(0.5, 0.6, 0.7);
+
+        glBegin(GL_LINES);
+
+        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
+        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
+
+        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
+        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
+
+        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
+        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
+        glEnd();
+    }
+}
+
+
 
 void CalculateAndPrintCubeWorldCoordinates() {
     glm::vec3 cubeLocalPosition = glm::vec3(0, 8.7, 1.1);
@@ -625,24 +652,6 @@ void CalculateAndPrintCubeWorldCoordinates() {
     cubeWorldPosition = glm::vec3(cubeModelMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
     std::cout << "Cube World Coordinates: (" << cubeWorldPosition.x << ", " << cubeWorldPosition.y << ", " << cubeWorldPosition.z << ")" << std::endl;
 }
-
-
-void modelmove() {
-    glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // È¸Àü °¢µµ Àû¿ë
-
-    //draw solar system
-    glColor3f(0.5, 0.6, 0.7);
-    glPushMatrix();
-    glTranslatef(moving.x, moving.y, moving.z); // head
-    glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //ÀÌ°Å¸¦ ÇÏ¸é ¿ÀºêÁ§Æ®¸¸ È¸Àü
-    DrawWireSurface(vertices, faces);
-    glPushMatrix();
-    glTranslatef(0, 8.7, 1.1); //¸Ó¸® ÀÚ¸®
-    //glutWireCube(2.0);
-    glPopMatrix();
-    glPopMatrix();
-}
-
 
 
 void MyDisplay() {
@@ -678,6 +687,16 @@ void MyDisplay() {
 
 
 
+    
+
+    //set modelview matrix
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+
+
+    
+
     //set projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -688,101 +707,7 @@ void MyDisplay() {
 
     gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0, 41.0);
 
-    //set modelview matrix
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-
-
-
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-
-    vec3 eye = myCamera.eye;
-    vec3 at = myCamera.at - moving;
-    vec3 up = myCamera.up;
-
-    glMatrixMode(GL_MODELVIEW); //set matrix mode
-    glLoadIdentity(); //set Identity 
-
-    if (viewport) {
-        glViewport(0, 0, Width, Height);
-
-        // ÀüÃ¼ Ã¢¿¡ ±×¸± ³»¿ë (Å¥ºê µî)
-        glPushMatrix();
-        gluLookAt(5.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
-        glColor3f(0.7, 0.7, 0.7);
-        glutWireCube(1.0);
-        glPopMatrix();
-
-        glViewport(Width - Width / 2, 0, Width / 2, Height / 2);
-        //°ñ·½ µû¶ó°¡°Ô ÇÏ±â
-        if (moveCamera) {
-            at = myCamera.at - moving;
-            gluLookAt(cubeWorldPosition.x, cubeWorldPosition.y, cubeWorldPosition.z,
-                at[0], at[1], at[2],
-                up[0], up[1], up[2]);
-            //glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // È¸Àü °¢µµ Àû¿ë
-            glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f);
-        }
-
-        else {//3ÀÎÄª ½ÃÁ¡
-            gluLookAt(eye[0] - moving.x, eye[1] + 11.0f - moving.y, eye[2] - moving.z,
-                at[0], at[1], at[2], up[0], up[1], up[2]);
-            modelmove();
-
-        }
-    }
-
-    //°ñ·½ µû¶ó°¡°Ô ÇÏ±â
-    if (moveCamera && !viewport) { //ÀÏÀÎÄª
-        vec3 at = myCamera.at;
-        glViewport(0, 0, Width, Height);
-
-        gluLookAt(cubeWorldPosition.x, cubeWorldPosition.y, cubeWorldPosition.z,
-            at_[0] + cubeWorldPosition.x, at_[1] + cubeWorldPosition.y, at_[2] + cubeWorldPosition.z,
-            up[0], up[1], up[2]);
-
-
-        glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // È¸Àü °¢µµ Àû¿ë
-        glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f);
-    }
-
-    else if (!viewport) {
-        glViewport(0, 0, Width, Height);
-
-        gluLookAt(eye[0] - moving.x, eye[1] + 11.0f - moving.y, eye[2] - moving.z,
-            at[0], at[1], at[2], up[0], up[1], up[2]);
-        modelmove();
-    }
-
-    CalculateAndPrintCubeWorldCoordinates();
-
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
-    ////////////////////////////////////////////////
+    gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
 
     //GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -793,15 +718,36 @@ void MyDisplay() {
 
     glDisable(GL_LIGHTING);
 
-    //glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
 
 
     skybox.MakeSky(skybox_size);
 
 
+    glPushMatrix();
 
 
-    glEnable(GL_LIGHTING);
+        glScaled(0.1,0.1,0.1);
+
+        glRotated(180, 0, 1, 0);
+        glRotated(-90, 1, 0, 0);
+
+        DrawWireSurface(vertices, faces);
+        glutSolidSphere(0.5, 100, 100);
+
+
+
+        printf_s("%.2f / %.2f / %.2f\n", myCamera.eye.x, myCamera.eye.y, myCamera.eye.z);
+
+
+        printf_s("%.2f / %.2f / %.2f\n", myCamera.at.x, myCamera.at.y, myCamera.at.z);
+
+    glPopMatrix();
+
+
+
+    CalculateAndPrintCubeWorldCoordinates();
+
 
 
     // ì•½ê°„ í•¸ë“œí°ìœ¼ë¡œ ë³´ëŠ”ê²ƒ ì²˜ëŸ¼ ë¨
@@ -826,10 +772,7 @@ void MyDisplay() {
     //moveStars();
     //drawStars();
 
-    //night_sphere.Make_night_sky(1);
-    /// skyboxë‘ night_spehreë¥¼ ê·¸ë¦¬ë©´ í…ìŠ¤ì³ê°€ í•˜ë‚˜ì”© ë°€ë¦¼. ë­ê°€ ë¬¸ì œì¸ê±°ì§€?
 
-    //glLightfv(GL_LIGHT0, GL_POSITION , testlightPosition);
 
     glPopMatrix();
 
@@ -855,7 +798,7 @@ void MyReshape(int w, int h) {
 
 void MyTimer(int Value) {
     SpinAngle = (SpinAngle + 3) % 360;
-    Spin_star = (Spin_star + 0.05) ;
+    Spin_star = (Spin_star + 0.05);
     Spin_sun_moon = (Spin_sun_moon + 0.01);
     glutPostRedisplay();
     glutTimerFunc(10, MyTimer, 1);
@@ -885,114 +828,61 @@ void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
         Ray_flag = true;
     }
 
-
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-        switch (button) {
-    case GLUT_LEFT_BUTTON:
-        if (state == GLUT_DOWN) {
-            ptLastMousePosit.x = ptCurrentMousePosit.x = x;
-            ptLastMousePosit.y = ptCurrentMousePosit.y = y;
-            bMousing = true;
-        }
-        else
-            bMousing = false;
-        break;
-    case GLUT_MIDDLE_BUTTON:
-    case GLUT_RIGHT_BUTTON:
-        break;
-    default:
-        break;
-    }
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-    ///////////////////////////////////
-
-
-    glutPostRedisplay();
-
 }
 
 void MyMouseMove(GLint X, GLint Y)
 {
-    
-    //currentMouse = vec2(X, Y);
 
-
-        ptCurrentMousePosit.x = x;
-    ptCurrentMousePosit.y = y;
-
-    if (bMousing)
-    {
-        g_fSpinX -= (ptCurrentMousePosit.x - ptLastMousePosit.x);
-        g_fSpinY -= (ptCurrentMousePosit.y - ptLastMousePosit.y);//Á¦ÀÚ¸® È¸Àü //°¢µµ¶ó°í »ı°¢ÇÏ¸é µÉµí
-    }
-
-    ptLastMousePosit.x = ptCurrentMousePosit.x;
-    ptLastMousePosit.y = ptCurrentMousePosit.y;
-
-    glutPostRedisplay();
-
+    currentMouse = vec2(X, Y);
     glutPostRedisplay();
 }
 
-vec3 at_(0, 0, 0);
 void MyKeyboard(unsigned char key, int x, int y) {
-    glm::vec3 right = glm::vec3(-1.0f, 0.0f, 0.0f);
-    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
-    glm::vec3 forward = glm::vec3(0.0f, 0.0f, 1.0f);
-    glm::vec3 translate_obj = glm::vec3(0.0f);
+    float scale = 0.1;
+    switch (key) {
+    case 'w':
+        myCamera.MoveCamera(myCamera.forward * scale);
+        break;
+    case 's':
+        myCamera.MoveCamera(myCamera.forward * -scale);
+        break;
+    case 'a':
+        myCamera.MoveCamera(myCamera.right * -scale);
+        break;
+    case 'd':
+        myCamera.MoveCamera(myCamera.right * scale);
+        break;
+    case 'q':
+        myCamera.MoveCamera(myCamera.up * scale);
+        break;
+    case 'z':
+        myCamera.MoveCamera(myCamera.up * -scale);
+        break;
 
-    switch (key) { //¿ÀºêÁ§Æ® À§Ä¡ ÀÌµ¿
-    case 'w': // À§·Î ÀÌµ¿
-        translate_obj += forward * g_fCameraSpeed;
-        at_ -= forward;
-        break;
-    case 's': // ¾Æ·¡·Î ÀÌµ¿
-        translate_obj -= forward * g_fCameraSpeed;
-        at_ += forward;
-
-        break;
-    case 'a': // ¿ŞÂÊÀ¸·Î ÀÌµ¿
-        translate_obj -= right * g_fCameraSpeed;
-        at_ += right;
-
-        break;
-    case 'd': // ¿À¸¥ÂÊÀ¸·Î ÀÌµ¿
-        translate_obj += right * g_fCameraSpeed;
-        at_ -= right;
-
-        break;
-    case 't': // Ä«¸Ş¶ó ½ÃÁ¡ º¯°æ
-        if (!viewport) {//ºĞÇÒÁß¿¡´Â ½ÃÁ¡º¯°æ ¾ÈµÇ°Ô ÇÏ±â
-            moveCamera = !moveCamera;
-        }
-        break;
-    case 'm':
-        // Ãß°¡µÈ ÄÚµå: Å° 'm'À» ´©¸¦ ¶§¸¶´Ù Å« È­¸é°ú ÀÛÀº È­¸éÀ» ÀüÈ¯
-        viewport = !viewport;
+    default:
         break;
     }
-
-
-    // È¸ÀüµÈ ÀÌµ¿ º¤ÅÍ¸¦ ±¸ÇØ¼­ ¿ÀºêÁ§Æ®¸¦ ÀÌµ¿½ÃÅ´
-    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f));
-    translate_obj = glm::vec3(rotationMatrix * glm::vec4(translate_obj, 0.0f));
-    moving += translate_obj;
-
     glutPostRedisplay();
 }
+
+
+
+void modelmove() {
+    glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // íšŒì „ ê°ë„ ì ìš©
+
+    //draw solar system
+    glColor3f(0.5, 0.6, 0.7);
+    glPushMatrix();
+    glTranslatef(moving.x, moving.y, moving.z); // head
+    glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //ì´ê±°ë¥¼ í•˜ë©´ ì˜¤ë¸Œì íŠ¸ë§Œ íšŒì „
+    DrawWireSurface(vertices, faces);
+    glPushMatrix();
+    glTranslatef(0, 8.7, 1.1); //ë¨¸ë¦¬ ìë¦¬
+    //glutWireCube(2.0);
+    glPopMatrix();
+    glPopMatrix();
+}
+
 
 
 int main(int argc, char** argv) {
@@ -1009,17 +899,6 @@ int main(int argc, char** argv) {
     up = normalize(up);
     myCamera.InitCamera(eye, at, up);
 
-
-
-   LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
-
-//     //Init camera
-//     vec3 center(0, 0, 40);
-//     vec3 at(0, 0, 0);
-//     vec3 up = cross(vec3(1, 0, 0), at - center);
-//     up = normalize(up);
-//     myCamera.InitCamera(center, at, up);
-
     srand((unsigned int)time(NULL));
 
     loadTex.init();
@@ -1030,8 +909,10 @@ int main(int argc, char** argv) {
     // êµ¬ì²´ ì´ˆê¸°í™”
     initSpheres(sphere_num);  // 10ê°œì˜ êµ¬ì²´ë¥¼ ì´ˆê¸°í™”í•©ë‹ˆë‹¤.
     initFallingStars(100);
+
+    LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
     //night_sphere.init();
-    
+
 
     initLight();
     glutDisplayFunc(MyDisplay);
