@@ -35,7 +35,7 @@ int windowHeight, windowWidth;
 vec3 tmp_loc;
 
 static int skybox_size = 20;
-
+static float star_size = 0.05;
 static int SpinAngle = 0;
 static int weatherTime = 0;
 
@@ -171,7 +171,7 @@ void initSpheres(int numSpheres) {
     for (int i = 0; i < numSpheres; ++i) {
         SphereInfo sphere;
         float innerRadius = skybox_size * 4;
-        float outerRadius = skybox_size * 4 - 5;
+        float outerRadius = skybox_size * 4 + 5;
 
         sphere.x = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
         sphere.y = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
@@ -223,13 +223,13 @@ void drawSpheres() {
 
     glPushMatrix();
 
-    glTranslated(0, 0, -50);
+    glTranslated(0, 0, -skybox_size*2-1);
     glRotatef(Spin_star, 0.0, 1.0, 0.0);
 
     int count = 0;
     for (const auto& sphere : spheres) {
         count += 1;
-        glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // 투명도 적용
+        //glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // 투명도 적용
 
 
         if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
@@ -247,142 +247,13 @@ void drawSpheres() {
 
         glPushMatrix();
         glTranslatef(sphere.x, sphere.y, sphere.z);
-        glutSolidSphere(0.1, 20, 20);
+        glutSolidSphere(star_size, 20, 20);
         glPopMatrix();
     }
 
     glPopMatrix();
     glColor4f(1, 1, 1, 1);
 
-}
-
-
-//
-//struct StarInfo {
-//    float x, y, z;  // 현재 위치
-//    float targetX, targetY, targetZ;  // 목표 위치
-//    float speed;  // 이동 속도
-//};
-//
-//std::vector<StarInfo> stars;
-//
-//void initStars(int numStars) {
-//    stars.clear();  // 벡터 초기화
-//
-//    for (int i = 0; i < numStars; ++i) {
-//        StarInfo star;
-//        star.x = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        star.y = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        star.z = 40.0;  // 고정된 Z 좌표
-//
-//        star.targetX = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        star.targetY = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        star.targetZ = 30.0;  // 고정된 Z 좌표
-//
-//        star.speed = 0.1;
-//
-//        stars.push_back(star);  // 벡터에 추가
-//    }
-//}
-//
-//
-//
-//void moveStars() {
-//    for (auto& star : stars) {
-//        // 현재 위치에서 목표 위치로 이동
-//        float dx = star.targetX - star.x;
-//        float dy = star.targetY - star.y;
-//        float dz = star.targetZ - star.z;
-//        float distance = sqrt(dx * dx + dy * dy + dz * dz);
-//
-//        if (distance > 0.1) {  // 이동이 덜 된 경우에만 이동
-//            float factor = star.speed / distance;
-//            star.x += dx * factor;
-//            star.y += dy * factor;
-//            star.z += dz * factor;
-//        }
-//        else {  // 목표 위치에 도달하면 새로운 목표 위치 설정
-//            star.targetX = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//            star.targetY = static_cast<float>(rand()) / RAND_MAX * 80.0 - 40.0;
-//        }
-//    }
-//}
-//
-//void drawStars() {
-//    for (const auto& star : stars) {
-//        glPushMatrix();
-//        glTranslatef(star.x, star.y, star.z);
-//        glColor3f(1.0, 1.0, 1.0);  // 흰색
-//        glutSolidSphere(0.5, 10, 10);
-//        glPopMatrix();
-//    }
-//}
-
-struct FallingStar {
-    float x, y, z;  // 현재 위치
-    float speedX, speedY, speedZ;  // 이동 속도
-    float size;     // 크기
-    bool active;    // 활성 여부
-};
-
-std::vector<FallingStar> fallingStars;
-
-void initFallingStars(int numStars) {
-    fallingStars.clear();  // 벡터 초기화
-
-    for (int i = 0; i < numStars; ++i) {
-        FallingStar star;
-        star.x = 20.0;
-        star.y = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
-        star.z = 20.0;
-
-        star.speedX = static_cast<float>(rand()) / RAND_MAX * 5.0 * 0.1;  // X 방향 속도: 0에서 5.0 사이
-        star.speedY = static_cast<float>(rand()) / RAND_MAX * 5.0 * 0.1;  // Y 방향 속도: 0에서 5.0 사이
-        star.speedZ = static_cast<float>(rand()) / RAND_MAX * 2.0 * 0.1;  // Z 방향 속도: 0에서 2.0 사이
-        star.size = 5;
-        star.active = false;
-
-        fallingStars.push_back(star);  // 벡터에 추가
-    }
-}
-
-void moveFallingStars() {
-    for (auto& star : fallingStars) {
-        if (star.active) {
-            star.x += star.speedX;
-            star.y += star.speedY;
-            star.z -= star.speedZ;
-            star.size -= 0.02;  // 크기를 감소시켜 사라지는 효과
-
-            // 크기가 0보다 작아지면 비활성화
-            if (star.size < 0.0) {
-                star.active = false;
-                star.size = 0.0;  // 크기가 음수가 되지 않도록 보정
-            }
-        }
-        else {
-            // 일정 간격으로 떨어지는 별똥별이 나타나도록 설정
-            if (rand() % 100 == 0) {
-                star.active = true;
-                star.x = 20.0;
-                star.y = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
-                star.z = 20.0;
-                star.size = static_cast<float>(rand()) / RAND_MAX * 2.0 + 1.0;
-            }
-        }
-    }
-}
-
-void drawFallingStars() {
-    for (const auto& star : fallingStars) {
-        if (star.active) {
-            glPushMatrix();
-            glTranslatef(star.x, star.y, star.z);
-            glColor3f(1.0, 1.0, 1.0);  // 흰색
-            glutSolidSphere(star.size, 10, 10);
-            glPopMatrix();
-        }
-    }
 }
 
 
@@ -416,7 +287,7 @@ void draw_sun_moon() {
 
     //glutSolidSphere(1, 10, 10);
 
-    glRotatef(Spin_sun_moon * 10, 0, 1, 0);
+    glRotatef(Spin_sun_moon, 0, 1, 0);
     //glRotated(90, 0, 0, 1);
 
     glPushMatrix();
@@ -658,11 +529,44 @@ void DrawWireSurface(std::vector < glm::vec3 >& vectices,
 //}
 
 
+
+struct Star {
+    float x, y, z;   // 현재 위치
+    float destX, destZ;  // 목적지 위치
+    float size;      // 크기
+};
+
+std::vector<Star> stars;  // 별들의 목록
+
+void drawStar(float x, float y, float z, float size) {
+    glPushMatrix();
+    glTranslatef(x, y, z);
+    glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[25]);
+
+    draw_with_Texture2(size, 100);
+    glPopMatrix();
+}
+
+
+void moveStars() {
+    // 이동 속도 및 방향 설정 (예: 일정한 속도로 이동)
+    float speed = 0.1;
+
+    for (auto& star : stars) {
+        float deltaX = (star.destX - star.x) * speed;
+        float deltaZ = (star.destZ - star.z) * speed;
+
+        // 현재 위치 및 크기 업데이트
+        star.x += deltaX;
+        star.z += deltaZ;
+        star.size *= 0.8;  // 크기를 줄여나감
+    }
+}
+
+
+
 void MyDisplay() {
 
-
-    moveFallingStars();
-    drawFallingStars();
 
 
 
@@ -709,7 +613,7 @@ void MyDisplay() {
 
 
 
-    gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0, 41.0);
+    gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0,50);
 
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
@@ -736,11 +640,11 @@ void MyDisplay() {
         glRotated(180, 0, 1, 0);
         glRotated(-90, 1, 0, 0);
 
-        glTranslatef(moving.x, moving.z, moving.y);
+        glTranslatef(moving.x, moving.y, moving.z);
         glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //이거를 하면 오브젝트만 회전
 
        // printf_s("%f /%f\n", g_fSpinX, g_fSpinY);
-        printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
+        //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
         DrawWireSurface(vertices, faces);
         glutSolidSphere(0.5, 100, 100);
@@ -754,6 +658,14 @@ void MyDisplay() {
 
     glPopMatrix();
 
+
+
+    glPushMatrix();
+
+    for (const auto& star : stars) {
+        drawStar(star.x, star.y, star.z, star.size);
+    }
+    glPopMatrix();
 
 
     //CalculateAndPrintCubeWorldCoordinates();
@@ -777,6 +689,10 @@ void MyDisplay() {
 
 
     drawSpheres();
+
+    
+
+
 
 
     //moveStars();
@@ -827,6 +743,36 @@ void MyTimer2(int Value) {
     glutPostRedisplay();
     glutTimerFunc(1000, MyTimer2, 1);
 }
+
+
+
+void MyTimer3(int value) {
+    // 별똥별을 생성
+    Star newStar;
+    newStar.x = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
+    newStar.y = 20.0;
+    newStar.z = 20.0;
+    newStar.size = star_size * 3;
+    newStar.destX = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
+    newStar.destZ = 10.0;
+    stars.push_back(newStar);
+
+    // 다음 생성 타이밍을 10초 후로 설정
+    glutTimerFunc(10000, MyTimer3, 0);
+}
+
+void MyTimer4(int value) {
+    moveStars();
+    glutPostRedisplay();
+    glutTimerFunc(40, MyTimer4, 0);
+
+    auto it = std::remove_if(stars.begin(), stars.end(), [](const Star& star) {
+        return fabs(star.x - star.destX) < 0.1 && fabs(star.z - star.destZ) < 0.1;
+        });
+
+    stars.erase(it, stars.end());
+}
+
 
 void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
     if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN) {
@@ -946,9 +892,11 @@ void MyKeyboard(unsigned char key, int x, int y) {
     }
 
 
-    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 0.0f, 1.0f));
     translate_obj = glm::vec3(rotationMatrix * glm::vec4(translate_obj, 0.0f));
     moving += translate_obj;
+
+
 
 
     glutPostRedisplay();
@@ -982,7 +930,6 @@ int main(int argc, char** argv) {
 
     // 구체 초기화
     initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
-    initFallingStars(100);
 
     LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
     //night_sphere.init();
@@ -996,6 +943,10 @@ int main(int argc, char** argv) {
     glutKeyboardFunc(MyKeyboard);
     glutTimerFunc(40, MyTimer, 1);
     glutTimerFunc(1000, MyTimer2, 1);
+
+    MyTimer3(0);
+    glutTimerFunc(40, MyTimer4, 0);
+
     glutMainLoop();
     return 0;
 }
