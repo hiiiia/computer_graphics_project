@@ -1,4 +1,4 @@
-Ôªø
+#define _CRT_SECURE_NO_WARNINGS
 
 #include <GL/glew.h>
 #include <GL/glut.h>
@@ -128,6 +128,115 @@ void initSpheres(int numSpheres) {
         sphere.a = 1;
 
         spheres.push_back(sphere);  // Î≤°ÌÑ∞Ïóê Ï∂îÍ∞Ä
+
+using namespace std;
+using namespace glm;
+
+//static int Day = 0, Time = 0;
+
+int windowHeight, windowWidth;
+vec2 preMouse, currentMouse;
+vec3 moving(0.0f, 0.0f, 0.0f);
+glm::vec3 cubeWorldPosition(0.0f);
+
+float g_fSpinX = 0.0f;
+float g_fSpinY = 0.0f;
+
+float g_fDistance = -50.5f;
+float g_fCameraX = 0.0f;
+float g_fCameraY = 0.0f;
+float g_fCameraSpeed = 1.0f;
+
+bool moveCamera = false;
+
+static POINT ptLastMousePosit;
+static POINT ptCurrentMousePosit;
+static bool bMousing;
+
+int Width, Height;
+bool viewport = false;
+
+
+//obj ∆ƒ¿œ πﬁæ∆ø¿±‚ 
+std::vector < glm::vec3 > vertices;
+std::vector < glm::ivec3 > faces;
+std::vector < glm::vec2 > uvs;
+std::vector < glm::vec3 > normals;
+
+
+//3D ∞Ò∑Ω obj load
+bool LoadObj(const char* path,
+    std::vector < glm::vec3 >& out_vertices,
+    std::vector < glm::ivec3 >& out_faces,
+    std::vector < glm::vec2 >& out_uvs,
+    std::vector < glm::vec3 >& out_normals)
+{
+    //init variables
+    out_vertices.clear();
+    out_faces.clear();
+    out_uvs.clear();
+    out_normals.clear();
+
+    FILE* file = fopen(path, "r");
+    if (file == NULL) {
+        printf("Impossible to open the file !\n");
+        return false;
+    }
+
+    while (1) {
+        char lineHeader[128];
+        // read the first word of the line
+        int res = fscanf(file, "%s", lineHeader);
+        if (res == -1)
+            break;
+
+        if (strcmp(lineHeader, "v") == 0) {
+            glm::vec3 vertex;
+            fscanf(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+            out_vertices.push_back(vertex);
+        }
+        else if (strcmp(lineHeader, "vt") == 0) {
+            glm::vec2 uv;
+            fscanf(file, "%f %f %f\n", &uv.x, &uv.y);
+            out_uvs.push_back(uv);
+        }
+        else if (strcmp(lineHeader, "vn") == 0) {
+            glm::vec3 normal;
+            fscanf(file, "%f %f %f\n", &normal.x, &normal.y, &normal.z);
+            out_normals.push_back(normal);
+        }
+        else if (strcmp(lineHeader, "f") == 0) {
+            std::string vertex1, vertex2, vertex3;
+            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
+            int matchs = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0],
+                &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
+            out_faces.push_back(glm::ivec3(vertexIndex[0] - 1, vertexIndex[1] - 1, vertexIndex[2] - 1));
+
+        }
+    }
+
+}
+
+
+void DrawWireSurface(std::vector < glm::vec3 >& vectices,
+    std::vector < glm::ivec3 >& faces)
+{
+    //moving¿ª ≥÷æÓº≠ ∞Ò∑Î ¿ßƒ° ∫Ø∞Ê
+    for (int i = 0; i < faces.size(); i++) {
+
+        glColor3f(0.5, 0.6, 0.7);
+
+        glBegin(GL_LINES);
+
+        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
+        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
+
+        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
+        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
+
+        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
+        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
+        glEnd();
     }
 }
 
@@ -506,6 +615,36 @@ void drawRay() {
 
 
 
+
+void CalculateAndPrintCubeWorldCoordinates() {
+    glm::vec3 cubeLocalPosition = glm::vec3(0, 8.7, 1.1);
+    glm::mat4 cubeModelMatrix = glm::translate(glm::mat4(1.0f), moving) *
+        glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f)) *
+        glm::translate(glm::mat4(1.0f), cubeLocalPosition);
+
+    cubeWorldPosition = glm::vec3(cubeModelMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+    std::cout << "Cube World Coordinates: (" << cubeWorldPosition.x << ", " << cubeWorldPosition.y << ", " << cubeWorldPosition.z << ")" << std::endl;
+}
+
+
+void modelmove() {
+    glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // »∏¿¸ ∞¢µµ ¿˚øÎ
+
+    //draw solar system
+    glColor3f(0.5, 0.6, 0.7);
+    glPushMatrix();
+    glTranslatef(moving.x, moving.y, moving.z); // head
+    glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //¿Ã∞≈∏¶ «œ∏È ø¿∫Í¡ß∆Æ∏∏ »∏¿¸
+    DrawWireSurface(vertices, faces);
+    glPushMatrix();
+    glTranslatef(0, 8.7, 1.1); //∏”∏Æ ¿⁄∏Æ
+    //glutWireCube(2.0);
+    glPopMatrix();
+    glPopMatrix();
+}
+
+
+
 void MyDisplay() {
 
 
@@ -556,7 +695,94 @@ void MyDisplay() {
 
 
 
-    gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+
+    vec3 eye = myCamera.eye;
+    vec3 at = myCamera.at - moving;
+    vec3 up = myCamera.up;
+
+    glMatrixMode(GL_MODELVIEW); //set matrix mode
+    glLoadIdentity(); //set Identity 
+
+    if (viewport) {
+        glViewport(0, 0, Width, Height);
+
+        // ¿¸√º √¢ø° ±◊∏± ≥ªøÎ (≈•∫Í µÓ)
+        glPushMatrix();
+        gluLookAt(5.0, 5.0, 5.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+        glColor3f(0.7, 0.7, 0.7);
+        glutWireCube(1.0);
+        glPopMatrix();
+
+        glViewport(Width - Width / 2, 0, Width / 2, Height / 2);
+        //∞Ò∑Ω µ˚∂Û∞°∞‘ «œ±‚
+        if (moveCamera) {
+            at = myCamera.at - moving;
+            gluLookAt(cubeWorldPosition.x, cubeWorldPosition.y, cubeWorldPosition.z,
+                at[0], at[1], at[2],
+                up[0], up[1], up[2]);
+            //glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // »∏¿¸ ∞¢µµ ¿˚øÎ
+            glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f);
+        }
+
+        else {//3¿Œƒ™ Ω√¡°
+            gluLookAt(eye[0] - moving.x, eye[1] + 11.0f - moving.y, eye[2] - moving.z,
+                at[0], at[1], at[2], up[0], up[1], up[2]);
+            modelmove();
+
+        }
+    }
+
+    //∞Ò∑Ω µ˚∂Û∞°∞‘ «œ±‚
+    if (moveCamera && !viewport) { //¿œ¿Œƒ™
+        vec3 at = myCamera.at;
+        glViewport(0, 0, Width, Height);
+
+        gluLookAt(cubeWorldPosition.x, cubeWorldPosition.y, cubeWorldPosition.z,
+            at_[0] + cubeWorldPosition.x, at_[1] + cubeWorldPosition.y, at_[2] + cubeWorldPosition.z,
+            up[0], up[1], up[2]);
+
+
+        glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // »∏¿¸ ∞¢µµ ¿˚øÎ
+        glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f);
+    }
+
+    else if (!viewport) {
+        glViewport(0, 0, Width, Height);
+
+        gluLookAt(eye[0] - moving.x, eye[1] + 11.0f - moving.y, eye[2] - moving.z,
+            at[0], at[1], at[2], up[0], up[1], up[2]);
+        modelmove();
+    }
+
+    CalculateAndPrintCubeWorldCoordinates();
+
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
+    ////////////////////////////////////////////////
 
 
     //GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
@@ -659,40 +885,112 @@ void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
         Ray_flag = true;
     }
 
+
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+        switch (button) {
+    case GLUT_LEFT_BUTTON:
+        if (state == GLUT_DOWN) {
+            ptLastMousePosit.x = ptCurrentMousePosit.x = x;
+            ptLastMousePosit.y = ptCurrentMousePosit.y = y;
+            bMousing = true;
+        }
+        else
+            bMousing = false;
+        break;
+    case GLUT_MIDDLE_BUTTON:
+    case GLUT_RIGHT_BUTTON:
+        break;
+    default:
+        break;
+    }
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+    ///////////////////////////////////
+
+
+    glutPostRedisplay();
+
 }
 
 void MyMouseMove(GLint X, GLint Y)
 {
     
-    currentMouse = vec2(X, Y);
+    //currentMouse = vec2(X, Y);
+
+
+        ptCurrentMousePosit.x = x;
+    ptCurrentMousePosit.y = y;
+
+    if (bMousing)
+    {
+        g_fSpinX -= (ptCurrentMousePosit.x - ptLastMousePosit.x);
+        g_fSpinY -= (ptCurrentMousePosit.y - ptLastMousePosit.y);//¡¶¿⁄∏Æ »∏¿¸ //∞¢µµ∂Û∞Ì ª˝∞¢«œ∏È µ…µÌ
+    }
+
+    ptLastMousePosit.x = ptCurrentMousePosit.x;
+    ptLastMousePosit.y = ptCurrentMousePosit.y;
+
+    glutPostRedisplay();
+
     glutPostRedisplay();
 }
 
+vec3 at_(0, 0, 0);
 void MyKeyboard(unsigned char key, int x, int y) {
-    float scale = 0.1;
-    switch (key) {
-    case 'w':
-        myCamera.MoveCamera(myCamera.forward * scale);
-        break;
-    case 's':
-        myCamera.MoveCamera(myCamera.forward * -scale);
-        break;
-    case 'a':
-        myCamera.MoveCamera(myCamera.right * -scale);
-        break;
-    case 'd':
-        myCamera.MoveCamera(myCamera.right * scale);
-        break;
-    case 'q':
-        myCamera.MoveCamera(myCamera.up * scale);
-        break;
-    case 'z':
-        myCamera.MoveCamera(myCamera.up * -scale);
-        break;
+    glm::vec3 right = glm::vec3(-1.0f, 0.0f, 0.0f);
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 forward = glm::vec3(0.0f, 0.0f, 1.0f);
+    glm::vec3 translate_obj = glm::vec3(0.0f);
 
-    default:
+    switch (key) { //ø¿∫Í¡ß∆Æ ¿ßƒ° ¿Ãµø
+    case 'w': // ¿ß∑Œ ¿Ãµø
+        translate_obj += forward * g_fCameraSpeed;
+        at_ -= forward;
+        break;
+    case 's': // æ∆∑°∑Œ ¿Ãµø
+        translate_obj -= forward * g_fCameraSpeed;
+        at_ += forward;
+
+        break;
+    case 'a': // øﬁ¬ ¿∏∑Œ ¿Ãµø
+        translate_obj -= right * g_fCameraSpeed;
+        at_ += right;
+
+        break;
+    case 'd': // ø¿∏•¬ ¿∏∑Œ ¿Ãµø
+        translate_obj += right * g_fCameraSpeed;
+        at_ -= right;
+
+        break;
+    case 't': // ƒ´∏ﬁ∂Û Ω√¡° ∫Ø∞Ê
+        if (!viewport) {//∫–«“¡ﬂø°¥¬ Ω√¡°∫Ø∞Ê æ»µ«∞‘ «œ±‚
+            moveCamera = !moveCamera;
+        }
+        break;
+    case 'm':
+        // √ﬂ∞°µ» ƒ⁄µÂ: ≈∞ 'm'¿ª ¥©∏¶ ∂ß∏∂¥Ÿ ≈´ »≠∏È∞˙ ¿€¿∫ »≠∏È¿ª ¿¸»Ø
+        viewport = !viewport;
         break;
     }
+
+
+    // »∏¿¸µ» ¿Ãµø ∫§≈Õ∏¶ ±∏«ÿº≠ ø¿∫Í¡ß∆Æ∏¶ ¿ÃµøΩ√≈¥
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f));
+    translate_obj = glm::vec3(rotationMatrix * glm::vec4(translate_obj, 0.0f));
+    moving += translate_obj;
+
     glutPostRedisplay();
 }
 
@@ -710,6 +1008,17 @@ int main(int argc, char** argv) {
     vec3 up(0, 0, 1);
     up = normalize(up);
     myCamera.InitCamera(eye, at, up);
+
+
+
+   LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
+
+//     //Init camera
+//     vec3 center(0, 0, 40);
+//     vec3 at(0, 0, 0);
+//     vec3 up = cross(vec3(1, 0, 0), at - center);
+//     up = normalize(up);
+//     myCamera.InitCamera(center, at, up);
 
     srand((unsigned int)time(NULL));
 
@@ -735,4 +1044,3 @@ int main(int argc, char** argv) {
     glutMainLoop();
     return 0;
 }
-
