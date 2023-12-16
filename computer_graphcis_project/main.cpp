@@ -170,9 +170,9 @@ void drawSpheres() {
         glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // 투명도 적용
 
 
-        if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
-            printf_s("%d", count);
-        }
+        //if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
+        //    printf_s("%d", count);
+        //}
 
         //glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
             // 재질 설정
