@@ -129,7 +129,7 @@ public:
 		//glEnd();
 
 
-		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[17]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(skybox_size, -skybox_size, skybox_size);
@@ -139,7 +139,7 @@ public:
 		glEnd();
 
 		// Back face
-		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[11]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[18]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, -skybox_size);
@@ -148,7 +148,7 @@ public:
 		glEnd();
 
 		// Top face
-		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[12]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[19]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 0.0f); glVertex3f(-skybox_size, skybox_size, -skybox_size);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-skybox_size, skybox_size, skybox_size);
@@ -157,7 +157,7 @@ public:
 		glEnd();
 
 		// Bottom face
-		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[13]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[20]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(-skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, skybox_size);
@@ -166,7 +166,7 @@ public:
 		glEnd();
 
 		// Right face
-		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[14]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[21]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 0.0f); glVertex3f(skybox_size, skybox_size, -skybox_size);
@@ -176,7 +176,7 @@ public:
 		glEnd();
 
 		// Left face
-		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[15]);
+		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[22]);
 		glBegin(GL_QUADS);
 		glTexCoord2f(0.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, -skybox_size);
 		glTexCoord2f(1.0f, 1.0f); glVertex3f(-skybox_size, -skybox_size, skybox_size);

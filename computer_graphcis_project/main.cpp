@@ -359,7 +359,7 @@ void draw_sun_moon() {
 
         glPushMatrix();
 
-        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[16]);
+        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[23]);
 
         glTranslated(radius, 0, 0);
 
@@ -377,7 +377,7 @@ void draw_sun_moon() {
         glPushMatrix();
 
 
-        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[17]);
+        glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[24]);
 
 
         glTranslated(-radius, 0, 0);
