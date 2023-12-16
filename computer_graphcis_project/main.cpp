@@ -62,6 +62,10 @@ float g_fCameraSpeed = 1.0f;
 vec3 at_(0, 0, 0);
 
 
+
+vec3 gol_position;
+vec3 gol_forward;
+
 bool moveCamera = false;
 
 static POINT ptLastMousePosit;
@@ -229,7 +233,7 @@ void drawSpheres() {
 
 
         if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
-            printf_s("%d", count);
+            //printf_s("%d", count);
         }
 
         //glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
@@ -642,16 +646,16 @@ void DrawWireSurface(std::vector < glm::vec3 >& vectices,
 }
 
 
-
-void CalculateAndPrintCubeWorldCoordinates() {
-    glm::vec3 cubeLocalPosition = glm::vec3(0, 8.7, 1.1);
-    glm::mat4 cubeModelMatrix = glm::translate(glm::mat4(1.0f), moving) *
-        glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f)) *
-        glm::translate(glm::mat4(1.0f), cubeLocalPosition);
-
-    cubeWorldPosition = glm::vec3(cubeModelMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-    std::cout << "Cube World Coordinates: (" << cubeWorldPosition.x << ", " << cubeWorldPosition.y << ", " << cubeWorldPosition.z << ")" << std::endl;
-}
+//
+//void CalculateAndPrintCubeWorldCoordinates() {
+//    glm::vec3 cubeLocalPosition = glm::vec3(0, 8.7, 1.1);
+//    glm::mat4 cubeModelMatrix = glm::translate(glm::mat4(1.0f), moving) *
+//        glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f)) *
+//        glm::translate(glm::mat4(1.0f), cubeLocalPosition);
+//
+//    cubeWorldPosition = glm::vec3(cubeModelMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+//    //std::cout << "Cube World Coordinates: (" << cubeWorldPosition.x << ", " << cubeWorldPosition.y << ", " << cubeWorldPosition.z << ")" << std::endl;
+//}
 
 
 void MyDisplay() {
@@ -687,7 +691,7 @@ void MyDisplay() {
 
 
 
-    
+
 
     //set modelview matrix
     glMatrixMode(GL_MODELVIEW);
@@ -695,7 +699,7 @@ void MyDisplay() {
 
 
 
-    
+
 
     //set projection
     glMatrixMode(GL_PROJECTION);
@@ -727,26 +731,31 @@ void MyDisplay() {
     glPushMatrix();
 
 
-        glScaled(0.1,0.1,0.1);
+        glScaled(0.1, 0.1, 0.1);
 
         glRotated(180, 0, 1, 0);
         glRotated(-90, 1, 0, 0);
+
+
+        glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //이거를 하면 오브젝트만 회전
+       // printf_s("%f /%f\n", g_fSpinX, g_fSpinY);
+        printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
         DrawWireSurface(vertices, faces);
         glutSolidSphere(0.5, 100, 100);
 
 
 
-        printf_s("%.2f / %.2f / %.2f\n", myCamera.eye.x, myCamera.eye.y, myCamera.eye.z);
+    //printf_s("%.2f / %.2f / %.2f\n", myCamera.eye.x, myCamera.eye.y, myCamera.eye.z);
 
 
-        printf_s("%.2f / %.2f / %.2f\n", myCamera.at.x, myCamera.at.y, myCamera.at.z);
+    //printf_s("%.2f / %.2f / %.2f\n", myCamera.at.x, myCamera.at.y, myCamera.at.z);
 
     glPopMatrix();
 
 
 
-    CalculateAndPrintCubeWorldCoordinates();
+    //CalculateAndPrintCubeWorldCoordinates();
 
 
 
@@ -821,12 +830,31 @@ void MyTimer2(int Value) {
 void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
     if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN) {
         preMouse = vec2(X, Y);
+
+
         currentMouse = preMouse;
+
+
+
+        ptLastMousePosit.x = ptCurrentMousePosit.x = X;
+        ptLastMousePosit.y = ptCurrentMousePosit.y = Y;
+        bMousing = true;
+
+
     }
+
+    else if (Button == GLUT_LEFT_BUTTON && State == GLUT_UP) {
+
+        bMousing = false;
+    }
+
 
     if (Button == GLUT_RIGHT_BUTTON && State == GLUT_DOWN) {
         Ray_flag = true;
     }
+
+
+
 
 }
 
@@ -834,23 +862,63 @@ void MyMouseMove(GLint X, GLint Y)
 {
 
     currentMouse = vec2(X, Y);
+
+
+    ptCurrentMousePosit.x = X;
+    ptCurrentMousePosit.y = Y;
+
+    if (bMousing)
+    {
+        g_fSpinX -= (ptCurrentMousePosit.x - ptLastMousePosit.x);
+        g_fSpinY -= (ptCurrentMousePosit.y - ptLastMousePosit.y);//제자리 회전 //각도라고 생각하면 될듯
+    }
+
+    ptLastMousePosit.x = ptCurrentMousePosit.x;
+    ptLastMousePosit.y = ptCurrentMousePosit.y;
+
+
     glutPostRedisplay();
 }
 
 void MyKeyboard(unsigned char key, int x, int y) {
     float scale = 0.1;
+
+
+    glm::vec3 right = glm::vec3(1.0f, 0.0f, 0.0f);
+    glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 forward = glm::vec3(0.0f, 1.0f, 0.0f);
+    glm::vec3 translate_obj = glm::vec3(0.0f);
+
+
     switch (key) {
     case 'w':
         myCamera.MoveCamera(myCamera.forward * scale);
+
+        translate_obj += forward * g_fCameraSpeed;
+        at_ -= forward;
+
         break;
     case 's':
         myCamera.MoveCamera(myCamera.forward * -scale);
+
+        translate_obj -= forward * g_fCameraSpeed;
+        at_ += forward;
+
+
         break;
     case 'a':
         myCamera.MoveCamera(myCamera.right * -scale);
+
+        translate_obj -= right * g_fCameraSpeed;
+        at_ += right;
+
         break;
     case 'd':
         myCamera.MoveCamera(myCamera.right * scale);
+
+        translate_obj += right * g_fCameraSpeed;
+        at_ -= right;
+
         break;
     case 'q':
         myCamera.MoveCamera(myCamera.up * scale);
@@ -862,26 +930,18 @@ void MyKeyboard(unsigned char key, int x, int y) {
     default:
         break;
     }
+
+
+    glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f));
+    translate_obj = glm::vec3(rotationMatrix * glm::vec4(translate_obj, 0.0f));
+    moving += translate_obj;
+
+
     glutPostRedisplay();
 }
 
 
 
-void modelmove() {
-    glRotatef(180.0f, 0.0f, 1.0f, 0.0f); // 회전 각도 적용
-
-    //draw solar system
-    glColor3f(0.5, 0.6, 0.7);
-    glPushMatrix();
-    glTranslatef(moving.x, moving.y, moving.z); // head
-    glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); //이거를 하면 오브젝트만 회전
-    DrawWireSurface(vertices, faces);
-    glPushMatrix();
-    glTranslatef(0, 8.7, 1.1); //머리 자리
-    //glutWireCube(2.0);
-    glPopMatrix();
-    glPopMatrix();
-}
 
 
 
