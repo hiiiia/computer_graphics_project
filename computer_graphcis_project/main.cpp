@@ -236,8 +236,6 @@ void drawSpheres() {
             //printf_s("%d", count);
         }
 
-        //glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[10]);
-            // 재질 설정
         glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
         glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
         glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
@@ -279,16 +277,10 @@ void draw_sun_moon() {
     float planets_rad = 1;
     glTranslated(0, 0, -22);
 
-    //glColor3f(1, 0, 0);
-
 
     glEnable(GL_TEXTURE_2D);
 
-
-    //glutSolidSphere(1, 10, 10);
-
     glRotatef(Spin_sun_moon, 0, 1, 0);
-    //glRotated(90, 0, 0, 1);
 
     glPushMatrix();
 
@@ -322,8 +314,6 @@ void draw_sun_moon() {
     glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
     glEnable(GL_LIGHT2);
 
-    //glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
-    //glEnable(GL_LIGHT1);
 
 
 
@@ -364,9 +354,11 @@ void drawRay() {
     vec3 direction = normalize(myCamera.eye - myCamera.at);
 
     // Skybox의 경계 상자 (예: -40, -40, -40에서 40, 40, 40)
-    vec3 boxMin(-skybox_size * 4, -skybox_size * 4, -skybox_size * 4);
-    vec3 boxMax(skybox_size * 4, skybox_size * 4, skybox_size * 4);
+    //vec3 boxMin(-skybox_size * 4, -skybox_size * 4, -skybox_size * 4);
+    //vec3 boxMax(skybox_size * 4, skybox_size * 4, skybox_size * 4);
 
+    vec3 boxMin(-skybox_size * 2, -skybox_size * 2, -skybox_size * 2);
+    vec3 boxMax(skybox_size * 2, skybox_size * 2, skybox_size * 2);
 
 
 
@@ -400,8 +392,11 @@ void drawRay() {
             sphere.a = 1;
 
             spheres.push_back(sphere);
-            //glutSolidCube(100);
-            //glColor3f(1.0, 1.0, 1.0);
+
+            glColor3f(1.0, 0, 0);
+            glutSolidCube(0.5);
+            glColor3f(1.0, 1.0, 1.0);
+
             glPopMatrix();
 
             printf_s("Sphere size: %d \n", spheres.size());
@@ -420,14 +415,14 @@ void drawRay() {
         glPushMatrix();
 
 
-        //glColor3f(1.0, 1.0, 0.0);
+        glColor3f(1.0, 0, 0.0);
 
-        //glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
+        glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
 
-        //glutSolidCube(0.2);
+        glutSolidCube(0.5);
 
 
-        //glColor3f(1.0, 1.0, 1.0);
+        glColor3f(1.0, 1.0, 1.0);
 
 
         glPopMatrix();
@@ -577,7 +572,6 @@ void MyDisplay() {
     GLfloat sea_mat_shininess[] = { 50.0 };
     GLfloat seaLightpos[] = { 1,1,1,1 };
 
-    //Rotate camera
     float x_move = -30.f * (currentMouse[0] - preMouse[0]) / windowWidth;
     float y_move = -30.f * (currentMouse[1] - preMouse[1]) / windowHeight;
 
@@ -585,7 +579,6 @@ void MyDisplay() {
     myCamera.RotateCamera(myCamera.up, (float)x_move);
     preMouse = currentMouse;
 
-    //get camera variables from camera class
 
     vec3 eye = myCamera.eye;
     vec3 at = myCamera.at;
@@ -594,18 +587,10 @@ void MyDisplay() {
 
 
 
-
-
-
-    //set modelview matrix
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
 
-
-
-
-    //set projection
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
@@ -617,16 +602,15 @@ void MyDisplay() {
 
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
-
-    //GLfloat LightPosition[] = { 0.0, 0.0, 0.0, 1.0 };
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    ///
-    //put your code here
+
+
 
 
     glDisable(GL_LIGHTING);
 
     glClear(GL_COLOR_BUFFER_BIT);
+
 
 
     skybox.MakeSky(skybox_size);
@@ -643,7 +627,7 @@ void MyDisplay() {
         glTranslatef(moving.x, moving.z, moving.y);
         glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); 
 
-        printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
+        //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
         DrawWireSurface(vertices, faces);
         glutSolidSphere(0.5, 100, 100);
@@ -651,6 +635,8 @@ void MyDisplay() {
 
     glPopMatrix();
 
+
+    sea.Update(SpinAngle, myCamera.eye, myCamera.at);
 
 
     glPushMatrix();
@@ -660,19 +646,6 @@ void MyDisplay() {
     }
     glPopMatrix();
 
-
-    //CalculateAndPrintCubeWorldCoordinates();
-
-
-
-    // 약간 핸드폰으로 보는것 처럼 됨
-    //glPushMatrix();
-
-    //glLoadIdentity();
-    //glTranslated(0, 3, -3);
-    //glutSolidSphere(2, 10, 10);
-
-    //glPopMatrix();
 
 
 
@@ -686,16 +659,8 @@ void MyDisplay() {
     
 
 
-
-
-    //moveStars();
-    //drawStars();
-
-
-
     glPopMatrix();
 
-    sea.Update(SpinAngle, myCamera.eye, myCamera.at);
 
 
     //oak2.DrawObj(1.f, -1.f, 0.f);
