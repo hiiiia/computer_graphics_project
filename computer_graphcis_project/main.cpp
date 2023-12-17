@@ -82,7 +82,6 @@ std::vector < glm::vec3 > uvs;
 std::vector < glm::vec3 > normals;
 
 
-bool rightmouse = false;
 
 LoadTex loadTex;
 Sea sea;
@@ -102,22 +101,21 @@ using namespace glm;
 
 
 
-
 void initLight() {
-    glEnable(GL_LIGHTING);  // ì¡°ëª… ?œì„±??
+    glEnable(GL_LIGHTING);  // 조명 활성화
 
-    // ê´‘ì› ?œì„±??
+    // 광원 활성화
     glEnable(GL_LIGHT0);
 
-    // ê´‘ì› ?„ì¹˜ ?¤ì •
-    GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };  // (x, y, z, w) - w??ê´‘ì›??ë°©í–¥ ê´‘ì›?¸ì? ?„ì¹˜ ê´‘ì›?¸ì?ë¥??˜í???
+    // 광원 위치 설정
+    GLfloat light_position[] = { 0.0, 0.0, 0.0, 1.0 };  // (x, y, z, w) - w는 광원이 방향 광원인지 위치 광원인지를 나타냄
 
-    // ê´‘ì› ?‰ìƒ ?¤ì •
+    // 광원 색상 설정
     GLfloat light_ambient[] = { 0.2, 0.2, 0.2, 1.0 };
     GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
     GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 
-    // ê´‘ì› ?¤ì • ?ìš©
+    // 광원 설정 적용
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -145,30 +143,30 @@ void initLight() {
 
     glDisable(GL_LIGHT2);
 
-    // ?¬ì§ˆ ?¤ì • ?œì„±??
-    //GL_COLOR_MATERIAL???œì„±?”í•˜ë©?glColor ëª…ë ¹?´ë¡œ ?¤ì •???‰ìƒ??ë¬¼ì²´???¬ì§ˆ???ìš©
+    // 재질 설정 활성화
+    //GL_COLOR_MATERIAL을 활성화하면 glColor 명령어로 설정한 색상이 물체의 재질에 적용
     //glEnable(GL_COLOR_MATERIAL);
 }
 
 
 void init(void) {
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-    glShadeModel(GL_SMOOTH);    //êµ¬ë¡œ ?°ì´??
-    glEnable(GL_DEPTH_TEST); // ê¹Šì´ë²„í¼
+    glShadeModel(GL_SMOOTH);    //구로 셰이딩
+    glEnable(GL_DEPTH_TEST); // 깊이버퍼
     glEnable(GL_CULL_FACE);
     glFrontFace(GL_FRONT);
 }
 
 
 struct SphereInfo {
-    float x, y, z;  // ?„ì¹˜
-    float r, g, b, a;  // ?‰ìƒ ë°??¬ëª…??
+    float x, y, z;  // 위치
+    float r, g, b, a;  // 색상 및 투명도
 };
 
 std::vector<SphereInfo> spheres;
 
 void initSpheres(int numSpheres) {
-    spheres.clear();  // ë²¡í„° ì´ˆê¸°??
+    spheres.clear();  // 벡터 초기화
 
     for (int i = 0; i < numSpheres; ++i) {
         SphereInfo sphere;
@@ -180,7 +178,7 @@ void initSpheres(int numSpheres) {
         sphere.z = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
 
         while (sqrt(sphere.x * sphere.x + sphere.y * sphere.y + sphere.z * sphere.z) < innerRadius) {
-            // ë°˜ì?ë¦„ì´ innerRadius ?´ìƒ?¸ì? ?•ì¸?˜ê³ , ?„ë‹ˆë©??¤ì‹œ ë¬´ìž‘??ì¢Œí‘œ ?ì„±
+            // 반지름이 innerRadius 이상인지 확인하고, 아니면 다시 무작위 좌표 생성
             sphere.x = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
             sphere.y = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
             sphere.z = static_cast<float>(rand()) / RAND_MAX * 2.0 * outerRadius - outerRadius;
@@ -191,12 +189,12 @@ void initSpheres(int numSpheres) {
         sphere.b = static_cast<float>(rand()) / RAND_MAX;
         sphere.a = 1;
 
-        spheres.push_back(sphere);  // ë²¡í„°??ì¶”ê?
+        spheres.push_back(sphere);  // 벡터에 추가
     }
 }
 
 
-//?¬ì§ˆ ?¤ì •
+//재질 설정
 GLfloat no_mat[] = { 0.0, 0.0, 0.0, 1.0 };
 GLfloat mat_ambient[] = { 0.7, 0.7, 0.7, 1.0 };
 GLfloat mat_ambient_color[] = { 0.8, 0.8, 0.2, 1.0 };
@@ -228,7 +226,7 @@ void drawSpheres() {
     int count = 0;
     for (const auto& sphere : spheres) {
         count += 1;
-        //glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // ?¬ëª…???ìš©
+        //glColor4f(sphere.r, sphere.g, sphere.b, sphere.a);  // 투명도 적용
 
 
         if (tmp_loc.x == sphere.x && tmp_loc.y == sphere.y && tmp_loc.z == sphere.z) {
@@ -273,15 +271,12 @@ void draw_sun_moon() {
     GLfloat sun_light_amb[] = { 1.0, 1.0, 0.0, 1.0 };
     GLfloat sun_light_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };
     GLfloat sun_light_specular[] = { 1.0, 1.0, 0.0, 1.0 };
-    GLfloat sun_light_emission[] = { 1.0, 1.0, 0.0, 1.0 };  // ë°œê´‘ ?ì„±
+    GLfloat sun_light_emission[] = { 1.0, 1.0, 0.0, 1.0 };  // 발광 속성
     GLfloat sun_ligth_pos[] = { skybox_size * 3, 0.0 ,-skybox_size ,1 };
 
 
 
-    GLfloat moon_light_amb[] = { 0.5, 0.5, 0.5, 1.0 };
-    GLfloat moon_light_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
-    GLfloat moon_light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
-    GLfloat moon_light_emission[] = { 0.8, 0.8, 0.8, 1.0 };  // ë°œê´‘ ?ì„±
+    GLfloat moon_light_emission[] = { 0.8, 0.8, 0.8, 1.0 };  // 발광 속성
     GLfloat moon_ligth_pos[] = { -skybox_size * 3, 0.0 ,-skybox_size ,1 };
 
     GLfloat radius = skybox_size * 3;
@@ -301,10 +296,7 @@ void draw_sun_moon() {
 
     draw_with_Texture2(planets_rad, 100);
 
-    glLightfv(GL_LIGHT1, GL_AMBIENT, sun_light_amb);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, sun_light_diffuse);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, sun_light_specular);
-    glLightfv(GL_LIGHT1, GL_EMISSION, sun_light_emission);  // ë°œê´‘ ?ì„±
+    glLightfv(GL_LIGHT1, GL_EMISSION, sun_light_emission);  // 발광 속성
     glLightfv(GL_LIGHT1, GL_POSITION, sun_ligth_pos);
     glEnable(GL_LIGHT1);
 
@@ -328,7 +320,7 @@ void draw_sun_moon() {
     glLightfv(GL_LIGHT2, GL_AMBIENT, moon_light_amb);
     glLightfv(GL_LIGHT2, GL_DIFFUSE, moon_light_diffuse);
     glLightfv(GL_LIGHT2, GL_SPECULAR, moon_light_specular);
-    glLightfv(GL_LIGHT2, GL_EMISSION, moon_light_emission);  // ë°œê´‘ ?ì„±
+    glLightfv(GL_LIGHT2, GL_EMISSION, moon_light_emission);  // 발광 속성
     glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
     glEnable(GL_LIGHT2);
 
@@ -371,7 +363,7 @@ void drawRay() {
     vec3 eye = myCamera.eye;
     vec3 direction = normalize(myCamera.eye - myCamera.at);
 
-    // Skybox??ê²½ê³„ ?ìž (?? -40, -40, -40?ì„œ 40, 40, 40)
+    // Skybox의 경계 상자 (예: -40, -40, -40에서 40, 40, 40)
     //vec3 boxMin(-skybox_size * 4, -skybox_size * 4, -skybox_size * 4);
     //vec3 boxMax(skybox_size * 4, skybox_size * 4, skybox_size * 4);
 
@@ -380,7 +372,7 @@ void drawRay() {
 
 
 
-    // ?ˆì´ ?œê°??ë°??•ë³´ ì¶œë ¥
+    // 레이 시각화 및 정보 출력
 
     if (Ray_flag) {
 
@@ -390,7 +382,7 @@ void drawRay() {
         if (hit) {
 
             printf_s("Hit\n");
-            // ì¶©ëŒ ì§€??ê³„ì‚°
+            // 충돌 지점 계산
             tmp_loc = eye + tMin * direction;
 
             glPushMatrix();
@@ -537,12 +529,12 @@ void DrawWireSurface(std::vector<glm::vec3>& vertices,
 
 
 struct Star {
-    float x, y, z;   // ?„ìž¬ ?„ì¹˜
-    float destX, destZ;  // ëª©ì ì§€ ?„ì¹˜
-    float size;      // ?¬ê¸°
+    float x, y, z;   // 현재 위치
+    float destX, destZ;  // 목적지 위치
+    float size;      // 크기
 };
 
-std::vector<Star> stars;  // ë³„ë“¤??ëª©ë¡
+std::vector<Star> stars;  // 별들의 목록
 
 void drawStar(float x, float y, float z, float size) {
     glPushMatrix();
@@ -555,17 +547,17 @@ void drawStar(float x, float y, float z, float size) {
 
 
 void moveStars() {
-    // ?´ë™ ?ë„ ë°?ë°©í–¥ ?¤ì • (?? ?¼ì •???ë„ë¡??´ë™)
+    // 이동 속도 및 방향 설정 (예: 일정한 속도로 이동)
     float speed = 0.1;
 
     for (auto& star : stars) {
         float deltaX = (star.destX - star.x) * speed;
         float deltaZ = (star.destZ - star.z) * speed;
 
-        // ?„ìž¬ ?„ì¹˜ ë°??¬ê¸° ?…ë°?´íŠ¸
+        // 현재 위치 및 크기 업데이트
         star.x += deltaX;
         star.z += deltaZ;
-        star.size *= 0.8;  // ?¬ê¸°ë¥?ì¤„ì—¬?˜ê°
+        star.size *= 0.8;  // 크기를 줄여나감
     }
 }
 
@@ -637,25 +629,27 @@ void MyDisplay() {
     glRotated(180, 0, 1, 0);
     glRotated(-90, 1, 0, 0);
 
-    glTranslatef(0, 2, 0);
+    glTranslatef(moving.x, moving.z, moving.y);
+    glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f);
 
+    //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
-        glRotated(-90, 1, 0, 0); //추가 hy
-        glScalef(0.1f, 0.1f, 0.1f);//추가 hy
+    glRotated(-90, 1, 0, 0); //추가 hy
+    glScalef(0.1f, 0.1f, 0.1f);//추가 hy
 
-        glTranslatef(0, 0, 25);
+    glTranslatef(0, 0, 25);
 
-        glPushMatrix();
-            glTranslatef(2.5, -10, 52);
-            glutSolidSphere(1, 20, 16);
-            glPushMatrix();
-                glTranslatef(-5,0, 0);
-                glutSolidSphere(1, 20, 16);
-            glPopMatrix();
-        glPopMatrix();
+    glPushMatrix();
+    glTranslatef(2.5, -10, 52);
+    glutSolidSphere(1, 20, 16);
+    glPushMatrix();
+    glTranslatef(-5, 0, 0);
+    glutSolidSphere(1, 20, 16);
+    glPopMatrix();
+    glPopMatrix();
 
-        DrawWireSurface(vertices, faces, uvs, normals);
-        glutSolidSphere(0.5, 100, 100);
+    DrawWireSurface(vertices, faces, uvs, normals);
+    glutSolidSphere(0.5, 100, 100);
 
 
     glPopMatrix();
@@ -715,7 +709,7 @@ void MyTimer2(int Value) {
 
     if (weatherTime >= 10) {
         weatherTime = 0;
-        //cout << " ï¿½ë¼®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ : ï¿½Ä±ï¿½ ï¿½Ïµï¿½ " << endl;
+        //cout << " �뼮�� ���� ���� : �ı� �ϵ� " << endl;
         Weather::ChangeWeather();
     }
 
@@ -727,18 +721,18 @@ void MyTimer2(int Value) {
 
 
 void MyTimer3(int value) {
-    // ë³„ë˜¥ë³„ì„ ?ì„±
+    // 별똥별을 생성
     Star newStar;
     newStar.x = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
     newStar.y = 20.0;
-    newStar.z = 20.0;
+    newStar.z = skybox_size;
     newStar.size = star_size * 3;
     newStar.destX = static_cast<float>(rand()) / RAND_MAX * 40.0 - 20.0;
-    newStar.destZ = 10.0;
+    newStar.destZ = skybox_size / 2;
     stars.push_back(newStar);
 
-    // ?¤ìŒ ?ì„± ?€?´ë°??10ì´??„ë¡œ ?¤ì •
-    glutTimerFunc(10000, MyTimer3, 0);
+    // 다음 생성 타이밍을 10초 후로 설정
+    glutTimerFunc(20000, MyTimer3, 0);
 }
 
 void MyTimer4(int value) {
@@ -805,7 +799,7 @@ void MyMouseMove(GLint X, GLint Y)
     if (bMousing)
     {
         g_fSpinX -= (ptCurrentMousePosit.x - ptLastMousePosit.x);
-        g_fSpinY -= (ptCurrentMousePosit.y - ptLastMousePosit.y);//?œìžë¦??Œì „ //ê°ë„?¼ê³  ?ê°?˜ë©´ ? ë“¯
+        g_fSpinY -= (ptCurrentMousePosit.y - ptLastMousePosit.y);//제자리 회전 //각도라고 생각하면 될듯
     }
 
     ptLastMousePosit.x = ptCurrentMousePosit.x;
@@ -814,6 +808,7 @@ void MyMouseMove(GLint X, GLint Y)
 
     glutPostRedisplay();
 }
+
 
 void MyKeyboard(unsigned char key, int x, int y) {
     float scale = 0.1;
@@ -905,8 +900,8 @@ int main(int argc, char** argv) {
     sea.init();
     skybox.init();
 
-    // êµ¬ì²´ ì´ˆê¸°??
-    initSpheres(sphere_num);  // 10ê°œì˜ êµ¬ì²´ë¥?ì´ˆê¸°?”í•©?ˆë‹¤.
+    // 구체 초기화
+    initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
 
     LoadObj("Data/stone/bird.obj", vertices, faces, uvs, normals);
     //night_sphere.init();
