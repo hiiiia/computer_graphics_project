@@ -15,6 +15,7 @@
     <ClInclude Include="LoadObj.h" />
     <ClInclude Include="LoadTex.h" />
     <ClInclude Include="Weather.h" />
+    <ClInclude Include="Camera.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

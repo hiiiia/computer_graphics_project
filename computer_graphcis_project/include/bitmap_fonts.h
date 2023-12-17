@@ -23,7 +23,7 @@
 
 struct BitmapFontData
 {
-    char*           Name;         /* The source font name             */
+    const char*           Name;         /* The source font name             */
     int             Quantity;     /* Number of chars in font          */
     int             Height;       /* Height of the characters         */
     const GLubyte** Characters;   /* The characters mapping           */
@@ -932,7 +932,7 @@ void renderText( float x, float y, BitmapFontType fontType, char *string )
 
     const BitmapFontData* font = getBitmapFontDataByType( fontType );
     const unsigned char* face;
-    char *c = '\0';
+    const char *c = "\0";
 
     for( c = string; *c != '\0'; ++c )
     {
