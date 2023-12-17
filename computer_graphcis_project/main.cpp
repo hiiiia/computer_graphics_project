@@ -652,7 +652,9 @@ void MyDisplay() {
     glPopMatrix();
 
 
-    sea.Update(SpinAngle, myCamera.eye, myCamera.at);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    sea.Update(SpinAngle, myCamera.eye, myCamera.at, moving, -g_fSpinX);
 
 
     glPushMatrix();
@@ -704,11 +706,11 @@ void MyTimer2(int Value) {
 
     if (weatherTime >= 10) {
         weatherTime = 0;
-        cout << " �뼮�� ���� ���� : �ı� �ϵ� " << endl;
+        //cout << " �뼮�� ���� ���� : �ı� �ϵ� " << endl;
         Weather::ChangeWeather();
     }
 
-    cout << weatherTime << endl;
+    //cout << weatherTime << endl;
     glutPostRedisplay();
     glutTimerFunc(1000, MyTimer2, 1);
 }
