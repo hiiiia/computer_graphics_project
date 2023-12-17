@@ -637,6 +637,7 @@ void MyDisplay() {
 
 
     glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
     sea.Update(SpinAngle, myCamera.eye, myCamera.at, moving, -g_fSpinX);
 
 
