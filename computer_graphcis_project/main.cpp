@@ -663,11 +663,6 @@ void MyDisplay() {
 
 
 
-    //oak2.DrawObj(1.f, -1.f, 0.f);
-    //oak3.DrawObj(-1.f, -1.f, 0.f);
-
-
-
     glutSwapBuffers();
 
 
@@ -683,7 +678,7 @@ void MyReshape(int w, int h) {
 void MyTimer(int Value) {
     SpinAngle = (SpinAngle + 3) % 360;
     Spin_star = (Spin_star + 0.05);
-    Spin_sun_moon = (Spin_sun_moon + 0.01);
+    Spin_sun_moon = (Spin_sun_moon + 0.2);
     glutPostRedisplay();
     glutTimerFunc(10, MyTimer, 1);
 }
@@ -877,7 +872,6 @@ int main(int argc, char** argv) {
     loadTex.init();
     sea.init();
     skybox.init();
-    loadTex.init();
 
     // 구체 초기화
     initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
