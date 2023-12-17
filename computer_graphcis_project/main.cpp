@@ -636,7 +636,8 @@ void MyDisplay() {
     glPopMatrix();
 
 
-    sea.Update(SpinAngle, myCamera.eye, myCamera.at);
+    glEnable(GL_LIGHTING);
+    sea.Update(SpinAngle, myCamera.eye, myCamera.at, moving, -g_fSpinX);
 
 
     glPushMatrix();
@@ -683,7 +684,7 @@ void MyReshape(int w, int h) {
 void MyTimer(int Value) {
     SpinAngle = (SpinAngle + 3) % 360;
     Spin_star = (Spin_star + 0.05);
-    Spin_sun_moon = (Spin_sun_moon + 0.01);
+    Spin_sun_moon = (Spin_sun_moon + 0.2);
     glutPostRedisplay();
     glutTimerFunc(10, MyTimer, 1);
 }
@@ -693,11 +694,11 @@ void MyTimer2(int Value) {
 
     if (weatherTime >= 10) {
         weatherTime = 0;
-        cout << " �뼮�� ���� ���� : �ı� �ϵ� " << endl;
+        //cout << " �뼮�� ���� ���� : �ı� �ϵ� " << endl;
         Weather::ChangeWeather();
     }
 
-    cout << weatherTime << endl;
+    //cout << weatherTime << endl;
     glutPostRedisplay();
     glutTimerFunc(1000, MyTimer2, 1);
 }
@@ -877,7 +878,6 @@ int main(int argc, char** argv) {
     loadTex.init();
     sea.init();
     skybox.init();
-    loadTex.init();
 
     // 구체 초기화
     initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.

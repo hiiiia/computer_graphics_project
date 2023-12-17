@@ -30,7 +30,7 @@ public:
 	float DownRaftSzie = 1.5f;
 	LoadObj4 obj;
 
-	void DrawObj() {
+	void DrawObj(vec3 moving, float g_SpinX) {
 		GLfloat oak_amb[] = { 0.1, 0.1, 0.1, 1.0 };
 		GLfloat oak_dif[] = { 0.5, 0.5, 0.5, 1.0 };
 		GLfloat oak_spe[] = { 1.0, 1.0 , 1.0, 1.0 };
@@ -50,6 +50,9 @@ public:
 		glMaterialfv(GL_FRONT, GL_AMBIENT, oak_amb);
 		glMaterialfv(GL_FRONT, GL_DIFFUSE, oak_dif);
 		glMaterialfv(GL_FRONT, GL_SPECULAR, oak_spe);
+
+		glTranslatef(-moving.x*0.05, -moving.z*0.05, -moving.y*0.05);
+		glRotatef(g_SpinX, 0.0f, 1.0f, 0.0f);
 
 		for (int j = 0; j < obj.objInfo.faces_vertices.size(); j++) {
 
@@ -424,12 +427,11 @@ public:
 		}
 	}
 	
-	void Update(float time, vec3 eye , vec3 at) {
+	void Update(float time, vec3 eye , vec3 at, vec3 move , float g_Spinx) {
 
-		
 
 		DrawSea(time, 1, 20, 25);
-		raft.DrawObj();
+		raft.DrawObj(move, g_Spinx);
 
 		for (int i = 0; i < 8; i++) {
 			Oaks[i].Move(time);
