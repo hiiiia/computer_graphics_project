@@ -98,6 +98,9 @@ public:
 		LoadGLTextures("Data/Planets/Sun.bmp", 23);
 		LoadGLTextures("Data/Planets/Moon.bmp", 24);
 		LoadGLTextures("Data/Planets/Pluto.bmp", 25);
+
+		LoadGLTextures("Data/stone/d.png", 26);
+
 	}
 
 };
