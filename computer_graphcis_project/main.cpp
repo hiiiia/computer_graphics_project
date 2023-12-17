@@ -57,7 +57,7 @@ float g_fCameraX = 0.0f;
 float g_fCameraY = 0.0f;
 float g_fCameraSpeed = 0.1f;
 
-
+bool rightmouse = false;
 
 vec3 at_(0, 0, 0);
 
@@ -77,8 +77,8 @@ bool viewport = false;
 
 
 std::vector < glm::vec3 > vertices;
-std::vector < glm::ivec3 > faces;
-std::vector < glm::vec2 > uvs;
+std::vector < glm::ivec4> faces;
+std::vector < glm::vec3 > uvs;
 std::vector < glm::vec3 > normals;
 
 
@@ -444,10 +444,11 @@ void drawRay() {
 
 
 
+//3D 골렘 obj load
 bool LoadObj(const char* path,
     std::vector < glm::vec3 >& out_vertices,
-    std::vector < glm::ivec3 >& out_faces,
-    std::vector < glm::vec2 >& out_uvs,
+    std::vector < glm::ivec4 >& out_faces,
+    std::vector < glm::vec3 >& out_uvs,
     std::vector < glm::vec3 >& out_normals)
 {
     //init variables
@@ -475,8 +476,8 @@ bool LoadObj(const char* path,
             out_vertices.push_back(vertex);
         }
         else if (strcmp(lineHeader, "vt") == 0) {
-            glm::vec2 uv;
-            fscanf(file, "%f %f %f\n", &uv.x, &uv.y);
+            glm::vec3 uv;
+            fscanf(file, "%f %f %f\n", &uv.x, &uv.y, &uv.z);
             out_uvs.push_back(uv);
         }
         else if (strcmp(lineHeader, "vn") == 0) {
@@ -486,52 +487,44 @@ bool LoadObj(const char* path,
         }
         else if (strcmp(lineHeader, "f") == 0) {
             std::string vertex1, vertex2, vertex3;
-            unsigned int vertexIndex[3], uvIndex[3], normalIndex[3];
-            int matchs = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0],
-                &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2]);
-            out_faces.push_back(glm::ivec3(vertexIndex[0] - 1, vertexIndex[1] - 1, vertexIndex[2] - 1));
+            unsigned int vertexIndex[4], uvIndex[4], normalIndex[4];
+            int matchs = fscanf(file, "%d/%d/%d %d/%d/%d %d/%d/%d %d/%d/%d\n", &vertexIndex[0], &uvIndex[0], &normalIndex[0],
+                &vertexIndex[1], &uvIndex[1], &normalIndex[1], &vertexIndex[2], &uvIndex[2], &normalIndex[2],
+                &vertexIndex[3], &uvIndex[3], &normalIndex[3]);
+            out_faces.push_back(glm::ivec4(vertexIndex[0] - 1, vertexIndex[1] - 1, vertexIndex[2] - 1, vertexIndex[3] - 1));
 
         }
     }
 
 }
 
+void DrawWireSurface(std::vector<glm::vec3>& vertices,
+    std::vector<glm::ivec4>& faces,
+    std::vector<glm::vec3>& uvs,
+    std::vector<glm::vec3>& normals) {
+
+    glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[26]);
 
 
-
-void DrawWireSurface(std::vector < glm::vec3 >& vectices,
-    std::vector < glm::ivec3 >& faces)
-{
-    //moving을 넣어서 골룸 위치 변경
     for (int i = 0; i < faces.size(); i++) {
 
-        glColor3f(0.5, 0.6, 0.7);
+        glBegin(GL_QUADS);
 
-        glBegin(GL_LINES);
+        glTexCoord2f(uvs[faces[i].x].x, uvs[faces[i].x].y);
+        glVertex3f(vertices[faces[i].x].x, vertices[faces[i].x].y, vertices[faces[i].x].z);
 
-        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
-        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
+        glTexCoord2f(uvs[faces[i].y].x, uvs[faces[i].y].y);
+        glVertex3f(vertices[faces[i].y].x, vertices[faces[i].y].y, vertices[faces[i].y].z);
 
-        glVertex3f(vectices[faces[i].y].x, vectices[faces[i].y].y, vectices[faces[i].y].z);
-        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
+        glTexCoord2f(uvs[faces[i].z].x, uvs[faces[i].z].y);
+        glVertex3f(vertices[faces[i].z].x, vertices[faces[i].z].y, vertices[faces[i].z].z);
 
-        glVertex3f(vectices[faces[i].z].x, vectices[faces[i].z].y, vectices[faces[i].z].z);
-        glVertex3f(vectices[faces[i].x].x, vectices[faces[i].x].y, vectices[faces[i].x].z);
+        glTexCoord2f(uvs[faces[i].w].x, uvs[faces[i].w].y);
+        glVertex3f(vertices[faces[i].w].x, vertices[faces[i].w].y, vertices[faces[i].w].z);
+
         glEnd();
     }
 }
-
-
-//
-//void CalculateAndPrintCubeWorldCoordinates() {
-//    glm::vec3 cubeLocalPosition = glm::vec3(0, 8.7, 1.1);
-//    glm::mat4 cubeModelMatrix = glm::translate(glm::mat4(1.0f), moving) *
-//        glm::rotate(glm::mat4(1.0f), glm::radians(-g_fSpinX), glm::vec3(0.0f, 1.0f, 0.0f)) *
-//        glm::translate(glm::mat4(1.0f), cubeLocalPosition);
-//
-//    cubeWorldPosition = glm::vec3(cubeModelMatrix * glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
-//    //std::cout << "Cube World Coordinates: (" << cubeWorldPosition.x << ", " << cubeWorldPosition.y << ", " << cubeWorldPosition.z << ")" << std::endl;
-//}
 
 
 
@@ -585,9 +578,11 @@ void MyDisplay() {
     float x_move = -30.f * (currentMouse[0] - preMouse[0]) / windowWidth;
     float y_move = -30.f * (currentMouse[1] - preMouse[1]) / windowHeight;
 
-    myCamera.RotateCamera(myCamera.right, (float)y_move);
-    myCamera.RotateCamera(myCamera.up, (float)x_move);
-    preMouse = currentMouse;
+    if (rightmouse == true) {
+        //myCamera.RotateCamera(myCamera.right, (float)y_move);
+        myCamera.RotateCamera(myCamera.up, (float)x_move);
+        preMouse = currentMouse;
+    }
 
 
     vec3 eye = myCamera.eye;
@@ -639,7 +634,21 @@ void MyDisplay() {
 
         //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
 
-        DrawWireSurface(vertices, faces);
+        glRotated(-90, 1, 0, 0); //추가 hy
+        glScalef(0.1f, 0.1f, 0.1f);//추가 hy
+
+        glTranslatef(0, 0, 25);
+
+        glPushMatrix();
+            glTranslatef(2.5, -10, 52);
+            glutSolidSphere(1, 20, 16);
+            glPushMatrix();
+                glTranslatef(-5,0, 0);
+                glutSolidSphere(1, 20, 16);
+            glPopMatrix();
+        glPopMatrix();
+
+        DrawWireSurface(vertices, faces, uvs, normals);
         glutSolidSphere(0.5, 100, 100);
 
 
@@ -741,10 +750,8 @@ void MyTimer4(int value) {
 
 void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
     if (Button == GLUT_LEFT_BUTTON && State == GLUT_DOWN) {
-        preMouse = vec2(X, Y);
 
 
-        currentMouse = preMouse;
 
 
 
@@ -763,6 +770,16 @@ void MyMouseClick(GLint Button, GLint State, GLint X, GLint Y) {
 
     if (Button == GLUT_RIGHT_BUTTON && State == GLUT_DOWN) {
         Ray_flag = true;
+
+        preMouse = vec2(X, Y);
+        currentMouse = preMouse;
+        rightmouse = true;
+
+
+    }
+    else if (Button == GLUT_RIGHT_BUTTON && State == GLUT_UP) {
+
+        rightmouse = false;
     }
 
 
@@ -850,11 +867,9 @@ void MyKeyboard(unsigned char key, int x, int y) {
         break;
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
     glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), glm::radians(g_fSpinX), glm::vec3(0.0f, 0.0f, 1.0f));
     translate_obj = glm::vec3(rotationMatrix * glm::vec4(translate_obj, 0.0f));
     moving += translate_obj;
-    /// //////////////////////////////////////////////////////////////////////////////
 
 
     glutPostRedisplay();
@@ -888,7 +903,7 @@ int main(int argc, char** argv) {
     // 구체 초기화
     initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
 
-    LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
+    LoadObj("Data/stone/bird.obj", vertices, faces, uvs, normals);
     //night_sphere.init();
 
 
