@@ -206,17 +206,14 @@ GLfloat high_shininess[] = { 100.0 };
 GLfloat mat_emission[] = { 0.3, 0.2, 0.2, 0.0 };
 
 
-GLfloat sun_mat_amb[] = { 0.2, 0 , 0, 1.0 };
-GLfloat sun_mat_diffuse[] = { 1, 0.5, 0.5, 1.0 };
-GLfloat sun_mat_specular[] = { 0, 0, 0, 1 };
-GLfloat sun_mat_emission[] = { 0.3, 0.1, 0.1, 0.0 };
+GLfloat sun_light_amb[] = { 1.0, 1.0, 0.0, 1.0 };
+GLfloat sun_light_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };
+GLfloat sun_light_specular[] = { 1.0, 1.0, 0.0, 1.0 };
 
 
-GLfloat sea_mat_amb[] = { 0.1, 0.1, 0.1, 1.0 };
-GLfloat sea_mat_diff[] = { 0.8, 0.8, 0.8, 1.0 };
-GLfloat sea_mat_specular[] = { 0.9, 0.9, 0.9, 1.0 };
-GLfloat sea_mat_shininess[] = { 50.0 };
-GLfloat seaLightpos[] = { 1,1,1,1 };
+GLfloat moon_light_amb[] = { 0.5, 0.5, 0.5, 1.0 };
+GLfloat moon_light_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+GLfloat moon_light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 
 
 void drawSpheres() {
@@ -271,8 +268,20 @@ void draw_with_Texture2(float radius, int slices) {
 void draw_sun_moon() {
     glPushMatrix();
 
-    GLfloat sub_ligth_pos[] = { skybox_size * 3, 0.0 ,-skybox_size ,1 };
+    GLfloat sun_light_amb[] = { 1.0, 1.0, 0.0, 1.0 };
+    GLfloat sun_light_diffuse[] = { 1.0, 1.0, 0.0, 1.0 };
+    GLfloat sun_light_specular[] = { 1.0, 1.0, 0.0, 1.0 };
+    GLfloat sun_light_emission[] = { 1.0, 1.0, 0.0, 1.0 };  // 발광 속성
+    GLfloat sun_ligth_pos[] = { skybox_size * 3, 0.0 ,-skybox_size ,1 };
+
+
+
+    GLfloat moon_light_amb[] = { 0.5, 0.5, 0.5, 1.0 };
+    GLfloat moon_light_diffuse[] = { 0.8, 0.8, 0.8, 1.0 };
+    GLfloat moon_light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+    GLfloat moon_light_emission[] = { 0.8, 0.8, 0.8, 1.0 };  // 발광 속성
     GLfloat moon_ligth_pos[] = { -skybox_size * 3, 0.0 ,-skybox_size ,1 };
+
     GLfloat radius = skybox_size * 3;
     float planets_rad = 1;
     glTranslated(0, 0, -22);
@@ -290,7 +299,11 @@ void draw_sun_moon() {
 
     draw_with_Texture2(planets_rad, 100);
 
-    glLightfv(GL_LIGHT1, GL_POSITION, sub_ligth_pos);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, sun_light_amb);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, sun_light_diffuse);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, sun_light_specular);
+    glLightfv(GL_LIGHT1, GL_EMISSION, sun_light_emission);  // 발광 속성
+    glLightfv(GL_LIGHT1, GL_POSITION, sun_ligth_pos);
     glEnable(GL_LIGHT1);
 
 
@@ -310,7 +323,10 @@ void draw_sun_moon() {
     draw_with_Texture2(planets_rad, 100);
 
 
-
+    glLightfv(GL_LIGHT2, GL_AMBIENT, moon_light_amb);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE, moon_light_diffuse);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, moon_light_specular);
+    glLightfv(GL_LIGHT2, GL_EMISSION, moon_light_emission);  // 발광 속성
     glLightfv(GL_LIGHT2, GL_POSITION, moon_ligth_pos);
     glEnable(GL_LIGHT2);
 
@@ -598,7 +614,7 @@ void MyDisplay() {
 
 
 
-    gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0,50);
+    gluPerspective(40.0, (GLfloat)windowWidth / (GLfloat)windowHeight, 1.0,skybox_size*2);
 
     gluLookAt(eye[0], eye[1], eye[2], at[0], at[1], at[2], up[0], up[1], up[2]);
 
