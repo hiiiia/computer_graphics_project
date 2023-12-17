@@ -31,7 +31,7 @@ GLfloat GetParticleRotate() {
 
 class Weather_Spring {
 public:
-#define Sakura_Amount 3333
+#define Sakura_Amount 250
 #define Map_Size 7.0f
 	particle p[Sakura_Amount];
 
@@ -107,7 +107,7 @@ public:
 class Weather_Winter {
 public:
 
-#define Snow_Amount 3333
+#define Snow_Amount 250
 #define Map_Size 7.0f
 	particle p[Snow_Amount];
 
@@ -183,7 +183,7 @@ public:
 class Weather_Fall {
 public:
 
-#define Snow_Amount 3333
+#define Snow_Amount 250
 #define Map_Size 7.0f
 	particle p[Snow_Amount];
 
@@ -273,7 +273,7 @@ public:
 		//p[i].vel = vec3((rand() % 50) - 25.0f, (rand() % 50) - 25.0f, -(rand() % 25) );
 		p[i].d.x = -(rand() / 32767.0f - 0.5f) / 200.0f;
 		p[i].d.y = -(rand() / 32767.0f - 0.5f) / 200.0f;
-		p[i].d.z = -(rand() / 32767.0f) / 50.0f;
+		p[i].d.z = -(rand() / 32767.0f) / 7.5f;
 	}
 
 	void Draw() {
