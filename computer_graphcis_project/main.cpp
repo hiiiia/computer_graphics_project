@@ -579,7 +579,7 @@ void MyDisplay() {
     float y_move = -30.f * (currentMouse[1] - preMouse[1]) / windowHeight;
 
     if (rightmouse == true) {
-        //myCamera.RotateCamera(myCamera.right, (float)y_move);
+        myCamera.RotateCamera(myCamera.right, (float)y_move);
         myCamera.RotateCamera(myCamera.up, (float)x_move);
         preMouse = currentMouse;
     }
@@ -699,7 +699,7 @@ void MyReshape(int w, int h) {
 void MyTimer(int Value) {
     SpinAngle = (SpinAngle + 3) % 360;
     Spin_star = (Spin_star + 0.05);
-    Spin_sun_moon = (Spin_sun_moon + 0.2);
+    Spin_sun_moon = (Spin_sun_moon + 0.01);
     glutPostRedisplay();
     glutTimerFunc(10, MyTimer, 1);
 }
