@@ -18,7 +18,7 @@
 
 #define PI 3.1415926
 #define TEXTURE_NUM 1
-#define SeaSize 150
+#define SeaSize 50
 #define SeaSize_Dense 10.0
 
 using namespace glm;
@@ -333,6 +333,8 @@ public:
 
 
 		//cout << LoadTex::MyTextureObject[6];
+		glEnable(GL_TEXTURE_2D);
+
 		glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[6]);
 		float timeTmp = 0.0f;
 
@@ -382,6 +384,8 @@ public:
 				glVertex3f(vertices[i + 1][j][0], vertices[i + 1][j][1], vertices[i + 1][j][2]);
 				glVertex3f(vertices[i + 1][j+1][0], vertices[i + 1][j+1][1], vertices[i + 1][j+1][2]);
 				glEnd();*/
+
+
 				glLightfv(GL_LIGHT0, GL_POSITION, seaLightpos);
 				glMaterialfv(GL_FRONT, GL_AMBIENT, sea_mat_amb);
 				glMaterialfv(GL_FRONT, GL_DIFFUSE, sea_mat_diff);
@@ -389,12 +393,14 @@ public:
 				glMaterialfv(GL_FRONT, GL_SHININESS, sea_mat_shininess);
 
 
-				glBegin(GL_TRIANGLES);
+				
 				vec3 p1(vertices[i][j][0], vertices[i][j][1], vertices[i][j][2]);
 				vec3 p2(vertices[i][j + 1][0], vertices[i][j + 1][1], vertices[i][j + 1][2]);
 				vec3 p3(vertices[i + 1][j][0], vertices[i + 1][j][1], vertices[i + 1][j][2]);
 				vec3 p4(vertices[i + 1][j + 1][0], vertices[i + 1][j + 1][1], vertices[i + 1][j + 1][2]);
 
+
+				glBegin(GL_TRIANGLES);
 				vec3 nomal1(0, 0, 0);
 				vec3 nomal2(0, 0, 0);
 
@@ -403,6 +409,8 @@ public:
 
 				nomal2 = cross(p4 - p3, p2 - p3);
 				nomal2 = normalize(nomal2);
+
+				
 
 				glNormal3f(nomal1.x, nomal1.y, nomal1.z);
 				glTexCoord2f(0.0f, 0.0f);
@@ -421,7 +429,24 @@ public:
 				glVertex3f(p4.x, p4.y, p4.z);
 				glEnd();
 
+				/*glBegin(GL_LINES);
 
+				glVertex3f(p1.x, p1.y, p1.z);
+				glVertex3f(p2.x, p2.y, p2.z);
+
+				glVertex3f(p1.x, p1.y, p1.z);
+				glVertex3f(p3.x, p3.y, p3.z);
+
+				glVertex3f(p1.x, p1.y, p1.z);
+				glVertex3f(p4.y, p4.y, p4.z);
+
+				glVertex3f(p2.x, p2.y, p2.z);
+				glVertex3f(p4.y, p4.y, p4.z);
+
+				glVertex3f(p3.x, p3.y, p3.z);
+				glVertex3f(p4.y, p4.y, p4.z);
+
+				glEnd();*/
 			}
 
 		}
@@ -431,38 +456,38 @@ public:
 
 
 		DrawSea(time, 1, 20, 25);
-		raft.DrawObj(move, g_Spinx);
+		//raft.DrawObj(move, g_Spinx);
 
-		for (int i = 0; i < 8; i++) {
+		/*for (int i = 0; i < 8; i++) {
 			Oaks[i].Move(time);
-		}
+		}*/
 
-		weather.Update(eye, at);
+		//weather.Update(eye, at);
 	}
 
 	void init() {
 
 
-		OakCask oak1(4, -6, 0, 1);
-		OakCask oak2(5, -3.5, 0, 2);
-		OakCask oak3(4, -1.5, 0, 1.2);
-		OakCask oak4(5, 1.5, 0, 1.7);
-		OakCask oak5(4, 3.5, 0, 1.5);
-		OakCask oak6(5, 6, 0, 2.2);
-		OakCask oak7(4, 2.5, 0, 2.4);
-		OakCask oak8(5, -2.5, 0, 2.7);
+		//OakCask oak1(4, -6, 0, 1);
+		//OakCask oak2(5, -3.5, 0, 2);
+		//OakCask oak3(4, -1.5, 0, 1.2);
+		//OakCask oak4(5, 1.5, 0, 1.7);
+		//OakCask oak5(4, 3.5, 0, 1.5);
+		//OakCask oak6(5, 6, 0, 2.2);
+		//OakCask oak7(4, 2.5, 0, 2.4);
+		//OakCask oak8(5, -2.5, 0, 2.7);
 
-		Oaks.push_back(oak1);
-		Oaks.push_back(oak2);
-		Oaks.push_back(oak3);
-		Oaks.push_back(oak4);
-		Oaks.push_back(oak5);
-		Oaks.push_back(oak6);
-		Oaks.push_back(oak7);
-		Oaks.push_back(oak8);
-		//initFog();
-		weather.init();
-		initAlpha();
+		//Oaks.push_back(oak1);
+		//Oaks.push_back(oak2);
+		//Oaks.push_back(oak3);
+		//Oaks.push_back(oak4);
+		//Oaks.push_back(oak5);
+		//Oaks.push_back(oak6);
+		//Oaks.push_back(oak7);
+		//Oaks.push_back(oak8);
+		////initFog();
+		//weather.init();
+		//initAlpha();
 	}
 
 };

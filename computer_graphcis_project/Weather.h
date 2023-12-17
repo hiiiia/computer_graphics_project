@@ -9,8 +9,6 @@
 struct particle {
 	vec3 pos;
 	vec3 d;
-	vec3 vel;
-	vec3 force;
 };
 
 vec3 camEye;

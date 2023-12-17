@@ -623,33 +623,33 @@ void MyDisplay() {
 
 
 
-    glDisable(GL_LIGHTING);
+    //glDisable(GL_LIGHTING);
 
-    glClear(GL_COLOR_BUFFER_BIT);
-
-
-
-    skybox.MakeSky(skybox_size);
+    //glClear(GL_COLOR_BUFFER_BIT);
 
 
-    glPushMatrix();
+
+    //skybox.MakeSky(skybox_size);
 
 
-        glScaled(0.1, 0.1, 0.1);
-
-        glRotated(180, 0, 1, 0);
-        glRotated(-90, 1, 0, 0);
-
-        glTranslatef(moving.x, moving.z, moving.y);
-        glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); 
-
-        //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
-
-        DrawWireSurface(vertices, faces);
-        glutSolidSphere(0.5, 100, 100);
+    //glPushMatrix();
 
 
-    glPopMatrix();
+    //    glScaled(0.1, 0.1, 0.1);
+
+    //    glRotated(180, 0, 1, 0);
+    //    glRotated(-90, 1, 0, 0);
+
+    //    glTranslatef(moving.x, moving.z, moving.y);
+    //    glRotatef(-g_fSpinX, 0.0f, 1.0f, 0.0f); 
+
+    //    //printf_s("%f /%f / %f\n", moving.x, moving.y, moving.z);
+
+    //    DrawWireSurface(vertices, faces);
+    //    glutSolidSphere(0.5, 100, 100);
+
+
+    //glPopMatrix();
 
 
     glEnable(GL_LIGHTING);
@@ -657,7 +657,7 @@ void MyDisplay() {
     sea.Update(SpinAngle, myCamera.eye, myCamera.at, moving, -g_fSpinX);
 
 
-    glPushMatrix();
+    /*glPushMatrix();
 
     for (const auto& star : stars) {
         drawStar(star.x, star.y, star.z, star.size);
@@ -677,7 +677,7 @@ void MyDisplay() {
     
 
 
-    glPopMatrix();
+    glPopMatrix();*/
 
 
 
@@ -889,12 +889,12 @@ int main(int argc, char** argv) {
 
     loadTex.init();
     sea.init();
-    skybox.init();
+    //skybox.init();
 
     // 구체 초기화
-    initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
+    //initSpheres(sphere_num);  // 10개의 구체를 초기화합니다.
 
-    LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
+    //LoadObj("Data/stone/Stone.obj", vertices, faces, uvs, normals);
     //night_sphere.init();
 
 
