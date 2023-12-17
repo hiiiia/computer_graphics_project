@@ -54,6 +54,7 @@ public:
 			glEnable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_DEPTH_TEST);
+			glDisable(GL_LIGHTING);
 			glBlendFunc(GL_SRC_ALPHA, 1);
 
 			for (int i = 0; i < Sakura_Amount; i++) {
@@ -86,6 +87,7 @@ public:
 				glPopMatrix();
 			}
 
+			glEnable(GL_LIGHTING);
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 		glPopMatrix();
@@ -130,6 +132,7 @@ public:
 		glEnable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
 		glBlendFunc(GL_SRC_ALPHA, 1);
 
 		for (int i = 0; i < Snow_Amount; i++) {
@@ -162,6 +165,7 @@ public:
 			glPopMatrix();
 		}
 
+		glEnable(GL_LIGHTING);
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glPopMatrix();
@@ -206,6 +210,7 @@ public:
 		glEnable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
 		glBlendFunc(GL_SRC_ALPHA, 1);
 
 		for (int i = 0; i < Snow_Amount; i++) {
@@ -238,6 +243,7 @@ public:
 			glPopMatrix();
 		}
 
+		glEnable(GL_LIGHTING);
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glPopMatrix();
@@ -283,6 +289,7 @@ public:
 		glEnable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_LIGHTING);
 		glBlendFunc(GL_SRC_ALPHA, 1);
 
 		for (int i = 0; i < Snow_Amount; i++) {
@@ -323,6 +330,7 @@ public:
 			
 		}
 
+		glEnable(GL_LIGHTING);
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glPopMatrix();
