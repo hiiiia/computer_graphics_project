@@ -39,7 +39,7 @@ static float star_size = 0.05;
 static int SpinAngle = 0;
 static int weatherTime = 0;
 
-static float Spin_sun_moon = 0;
+static float Spin_sun_moon = 240;
 
 static float Spin_star = 0;
 
@@ -288,6 +288,7 @@ void draw_sun_moon() {
 
     glRotatef(Spin_sun_moon, 0, 1, 0);
 
+    //printf_s("%f\n", Spin_sun_moon);
     glPushMatrix();
 
     glBindTexture(GL_TEXTURE_2D, LoadTex::MyTextureObject[23]);
@@ -367,8 +368,8 @@ void drawRay() {
     //vec3 boxMin(-skybox_size * 4, -skybox_size * 4, -skybox_size * 4);
     //vec3 boxMax(skybox_size * 4, skybox_size * 4, skybox_size * 4);
 
-    vec3 boxMin(-skybox_size * 2, -skybox_size * 2, -skybox_size * 2);
-    vec3 boxMax(skybox_size * 2, skybox_size * 2, skybox_size * 2);
+    vec3 boxMin(-skybox_size*2 , -skybox_size * 2, -skybox_size*2);
+    vec3 boxMax(skybox_size*2 , skybox_size*2 , skybox_size *2);
 
 
 
@@ -386,25 +387,38 @@ void drawRay() {
             tmp_loc = eye + tMin * direction;
 
             glPushMatrix();
-            glColor3f(1.0, 1.0, 0.0);
-            glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
+
+
+            // glRotatef 함수 호출
+            glRotatef(Spin_star, 0.0, 1.0, 0.0);
+
+            // 현재 변환 행렬의 정보를 얻어오기 위한 배열
+            GLfloat matrix[16];
+            glGetFloatv(GL_MODELVIEW_MATRIX, matrix);
 
 
             SphereInfo sphere;
 
-            sphere.x = tmp_loc.x;
-            sphere.y = tmp_loc.y;
-            sphere.z = tmp_loc.z;
+            sphere.x = matrix[0] * tmp_loc.x + matrix[4] * tmp_loc.y + matrix[8] * tmp_loc.z + matrix[12];
+            sphere.y = matrix[1] * tmp_loc.x + matrix[5] * tmp_loc.y + matrix[9] * tmp_loc.z + matrix[13];
+            sphere.z = matrix[2] * tmp_loc.x + matrix[6] * tmp_loc.y + matrix[10] * tmp_loc.z + matrix[14];
+
+            tmp_loc.x = sphere.x;
+            tmp_loc.y = sphere.y;
+            tmp_loc.z = sphere.z;
 
             sphere.r = 1;
             sphere.g = 1;
             sphere.b = 1;
             sphere.a = 1;
 
+            glColor3f(1.0, 1.0, 0.0);
+            glTranslatef(sphere.x, sphere.y, sphere.z);
+
             spheres.push_back(sphere);
 
-            glColor3f(1.0, 0, 0);
-            glutSolidCube(0.5);
+           // glColor3f(1.0, 0, 0);
+            glutSolidSphere(0.1,10,10);
             glColor3f(1.0, 1.0, 1.0);
 
             glPopMatrix();
@@ -412,7 +426,7 @@ void drawRay() {
             printf_s("Sphere size: %d \n", spheres.size());
             printf_s("Eye: (%.2f, %.2f, %.2f)\n", eye.x, eye.y, eye.z);
             printf_s("At: (%.2f, %.2f, %.2f)\n", direction.x, direction.y, direction.z);
-            printf_s("Ray: (%.2f, %.2f, %.2f)\n", tmp_loc.x, tmp_loc.y, tmp_loc.z);
+            printf_s("Ray: (%.2f, %.2f, %.2f)\n", sphere.x, sphere.y, sphere.z);
 
             Ray_flag = false;
 
@@ -425,11 +439,13 @@ void drawRay() {
         glPushMatrix();
 
 
-        glColor3f(1.0, 0, 0.0);
+        //glColor3f(1.0, 0, 0.0);
+        glRotatef(Spin_star, 0.0, 1.0, 0.0);
 
         glTranslatef(tmp_loc.x, tmp_loc.y, tmp_loc.z);
 
-        glutSolidCube(0.5);
+        glutSolidSphere(0.1, 10, 10);
+
 
 
         glColor3f(1.0, 1.0, 1.0);
@@ -732,7 +748,7 @@ void MyTimer3(int value) {
     stars.push_back(newStar);
 
     // 다음 생성 타이밍을 10초 후로 설정
-    glutTimerFunc(20000, MyTimer3, 0);
+    glutTimerFunc(10000, MyTimer3, 0);
 }
 
 void MyTimer4(int value) {
