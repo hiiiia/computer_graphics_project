@@ -91,7 +91,7 @@ public:
 			glDisable(GL_BLEND);
 			glEnable(GL_DEPTH_TEST);
 		glPopMatrix();
-		//cout << "웨더 업데이트 실행중인 ㅋㅋ" << endl;
+		//cout << "웨더 업데이트 실행중" << endl;
 	}
 
 	void Update() {
@@ -99,7 +99,7 @@ public:
 	}
 
 	void Init() {
-		cout << "웨더 이닛 실행된 ㅋㅋ" << endl;
+		cout << "Weahter init Done" << endl;
 		for (int i = 0; i < Sakura_Amount; i++) {
 			SetParticle(i);
 		}
@@ -177,7 +177,7 @@ public:
 	}
 
 	void Init() {
-		cout << "웨더 이닛 실행된 ㅋㅋ" << endl;
+		cout << "Weahter init Done" << endl;
 		for (int i = 0; i < Snow_Amount; i++) {
 			SetParticle(i);
 		}
@@ -256,7 +256,7 @@ public:
 	}
 
 	void Init() {
-		cout << "웨더 이닛 실행된 ㅋㅋ" << endl;
+		cout << "Weahter init Done" << endl;
 		for (int i = 0; i < Snow_Amount; i++) {
 			SetParticle(i);
 		}
@@ -343,7 +343,7 @@ public:
 	}
 
 	void Init() {
-		cout << "웨더 이닛 실행된 ㅋㅋ" << endl;
+		cout << "Weahter init Done" << endl;
 		for (int i = 0; i < Snow_Amount; i++) {
 			SetParticle(i);
 		}

@@ -29,7 +29,7 @@ class LoadTex {
 public:
 	static unsigned int MyTextureObject[TEXTURE_NUM];
 
-	int LoadGLTextures(const char* szFilePath, int number) {       //?????? ?��???? ?????? ???
+	int LoadGLTextures(const char* szFilePath, int number) {     
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load(szFilePath, &width, &height, &nrChannels, 0);
 		if (data) {
@@ -40,7 +40,7 @@ public:
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			printf_s("\n%s %d %d %d\n", szFilePath, width, height, nrChannels);
 			stbi_image_free(data);
-			cout << "�ؽ��� ��ȣ : " << number << " �ؽ�ó ���� : " << MyTextureObject[number] << endl;
+			cout << "Texture : " << number << " Texture Number: " << MyTextureObject[number] << endl;
 			return true;
 		}
 		else {

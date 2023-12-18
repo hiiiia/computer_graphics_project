@@ -31,7 +31,7 @@ public:
 	GLint g_textureID[1];
 
 
-	int LoadGLTextures(const char* szFilePath, int number) {       //������ �ε��ϰ� �ؽ��ķ� ��ȯ
+	int LoadGLTextures(const char* szFilePath, int number) {      
 		int width, height, nrChannels;
 		unsigned char* data = stbi_load(szFilePath, &width, &height, &nrChannels, 0);
 		if (data) {
