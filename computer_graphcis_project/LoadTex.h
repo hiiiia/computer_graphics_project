@@ -64,12 +64,12 @@ public:
 	}
 
 	void init() {
-		LoadGLTextures("snow_terrian/front.bmp", 0);
-		LoadGLTextures("snow_terrian/back.bmp", 1);
-		LoadGLTextures("snow_terrian/top.bmp", 2);
-		LoadGLTextures("snow_terrian/bottom.bmp", 3);
-		LoadGLTextures("snow_terrian/right.bmp", 4);
-		LoadGLTextures("snow_terrian/left.bmp", 5);
+		//LoadGLTextures("snow_terrian/front.bmp", 0);
+		//LoadGLTextures("snow_terrian/back.bmp", 1);
+		//LoadGLTextures("snow_terrian/top.bmp", 2);
+		//LoadGLTextures("snow_terrian/bottom.bmp", 3);
+		//LoadGLTextures("snow_terrian/right.bmp", 4);
+		//LoadGLTextures("snow_terrian/left.bmp", 5);
 		LoadGLTextures("Images/water.bmp", 6);
 		LoadGLTextures("Images/wood2.bmp", 7);
 		LoadGLTextures("Images/wood3.jpg", 8);

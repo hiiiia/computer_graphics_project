@@ -220,7 +220,7 @@ void drawSpheres() {
 
     glPushMatrix();
 
-    glTranslated(0, 0, -skybox_size * 2 - 1);
+    glTranslated(0, 0, -skybox_size * 2.5);
     glRotatef(Spin_star, 0.0, 1.0, 0.0);
 
     int count = 0;
